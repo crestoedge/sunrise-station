@@ -71,6 +71,17 @@
   - type: Tag
     tags:
     - LaserWeapon
+  # starlight start
+  - type: ContainerContainer
+    containers:
+      firing_pin: !type:Container
+  - type: ContainerFill
+    containers:
+      firing_pin:
+      - FiringPinLaser
+  - type: FiringPinHolder
+    supportedPins: [ Laser ]
+  # starlight end
 
 - type: entity
   id: BaseWeaponPowerCell
@@ -217,6 +228,17 @@
     tags:
     - Sidearm
     - LaserWeapon
+  # starlight start
+  - type: ContainerContainer
+    containers:
+      firing_pin: !type:Container
+  - type: ContainerFill
+    containers:
+      firing_pin:
+      - FiringPinLaser
+  - type: FiringPinHolder
+    supportedPins: [ Laser ]
+  # starlight end
 
 - type: entity
   name: makeshift laser pistol
@@ -592,7 +614,7 @@
     - Antagonists
   - type: PacifismAllowedGun
   # Sunrise - Start
-  - type: StealTarget 
+  - type: StealTarget
     stealGroup: OfficerHandgun
   # Sunrise - End
 
@@ -743,6 +765,17 @@
     flavorKind: station-event-random-sentience-flavor-inanimate
     weight: 0.0002 # 5,000 times less likely than 1 regular animal
     # not putting a BlockMovement component here cause that's funny.
+  # starlight start
+  - type: ContainerContainer
+    containers:
+      firing_pin: !type:Container
+  - type: ContainerFill
+    containers:
+      firing_pin:
+      - FiringPinAdvancedLaser
+  - type: FiringPinHolder
+    supportedPins: [ AdvancedLaser ]
+  # starlight end
 
 - type: entity
   name: advanced laser pistol
@@ -978,6 +1011,22 @@
         knockback: 1 #half of what resomi take
         staminaMultiplier: 15
   # Sunrise-end
+    stealGroup: WeaponEnergyShotgun
+  - type: GunRequiresWield #remove when inaccuracy on spreads is fixed
+  - type: Battery
+    maxCharge: 1200
+    startingCharge: 1200
+  # starlight start
+  - type: ContainerContainer
+    containers:
+      firing_pin: !type:Container
+  - type: ContainerFill
+    containers:
+      firing_pin:
+      - FiringPinAdvancedLaser
+  - type: FiringPinHolder
+    supportedPins: [ AdvancedLaser ]
+  # starlight end
 
 - type: entity
   name: temperature gun

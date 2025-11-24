@@ -33,6 +33,7 @@
     containers:
       ballistic-ammo: !type:Container
         ents: []
+      firing_pin: !type:Container
   - type: StaticPrice
     price: 500
   - type: RestrictByUserTag
@@ -48,6 +49,14 @@
       Felinid:
         knockback: 1.5 #half of what resomi take
         staminaMultiplier: 20
+  # starlight start
+  - type: ContainerFill
+    containers:
+      firing_pin:
+      - FiringPin
+  - type: FiringPinHolder
+    supportedPins: [ Rifle ]
+  # starlight end
 
 - type: entity
   parent: BaseWeaponShotgunAny

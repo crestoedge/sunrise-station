@@ -997,6 +997,15 @@
   - type: Battery
     maxCharge: 60000
     startingCharge: 60000
+  - type: ContainerContainer
+    containers:
+      firing_pin: !type:Container
+  - type: ContainerFill
+    containers:
+      firing_pin:
+      - FiringPinAdvancedLaser
+  - type: FiringPinHolder
+    supportedPins: [ AdvancedLaser ]
 
 - type: entity
   name: heavy pulse carbine
@@ -1060,6 +1069,15 @@
   - type: EyeCursorOffset
     maxOffset: 6
     pvsIncrease: 0.6
+  - type: ContainerContainer
+    containers:
+      firing_pin: !type:Container
+  - type: ContainerFill
+    containers:
+      firing_pin:
+      - FiringPinAdvancedLaser
+  - type: FiringPinHolder
+    supportedPins: [ AdvancedLaser ]
 
 - type: entity
   name: pulse rifle
@@ -1116,6 +1134,15 @@
   - type: Battery
     maxCharge: 400000
     startingCharge: 400000
+  - type: ContainerContainer
+    containers:
+      firing_pin: !type:Container
+  - type: ContainerFill
+    containers:
+      firing_pin:
+      - FiringPinAdvancedLaser
+  - type: FiringPinHolder
+    supportedPins: [ AdvancedLaser ]
 
 # XenoBorgs
 - type: entity

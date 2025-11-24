@@ -56,8 +56,9 @@
             - CartridgeLightRifle
   - type: ContainerContainer
     containers:
-      gun_magazine: !type:ContainerSlot
-      gun_chamber: !type:ContainerSlot
+      gun_magazine: !type:ContainerSlot ""
+      gun_chamber: !type:ContainerSlot ""
+      firing_pin: !type:Container # Starlight
   - type: StaticPrice
     price: 500
   # Sunrise start
@@ -81,6 +82,15 @@
     maxOffset: 2
     pvsIncrease: 0.2
   # Sunrise end
+  # Starlight
+  - type: ContainerFill
+    containers:
+      firing_pin:
+      - FiringPin
+  - type: FiringPinHolder
+    supportedPins: [ Rifle ]
+  # Starlight
+
 
 - type: entity
   name: AKMS
