@@ -88,7 +88,7 @@
       firing_pin:
       - FiringPin
   - type: FiringPinHolder
-    supportedPins: [ Rifle ]
+    supportedPins: [ Rifle, GunUpgrade ]
   # Starlight
 
 

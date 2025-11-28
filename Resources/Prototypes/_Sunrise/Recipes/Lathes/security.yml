@@ -532,3 +532,14 @@
     Plastic: 500
     Gold: 500
     Uranium: 400
+
+- type: latheRecipe
+  id: FiringPinExpedition
+  result: FiringPinExpedition
+  categories:
+  - Weapons
+  completetime: 3
+  materials:
+    Steel: 300
+    Glass: 100
+    Silver: 100
