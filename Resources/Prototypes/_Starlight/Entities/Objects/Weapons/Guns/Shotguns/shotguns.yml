@@ -107,7 +107,9 @@
   - type: GunRequiresWield
   - type: BallisticAmmoProvider
     capacity: 14
-
+  - type: ContainerContainer
+    containers:
+      firing_pin: !type:Container
 - type: entity
   name: Tkach Ya-Sui GA 12 revolver
   parent: [BaseWeaponShotgunAny, BaseSecurityContraband] # , BaseSecuritySalvageContraband
@@ -161,6 +163,9 @@
       Felinid:
         knockback: 1.5 #half of what resomi take
         staminaMultiplier: 20
+  - type: ContainerContainer
+    containers:
+      firing_pin: !type:Container
 
 - type: entity
   name: "AS-12 'Minotaur' Shotgun"
@@ -210,6 +215,7 @@
     containers:
       gun_magazine: !type:ContainerSlot
       gun_chamber: !type:ContainerSlot
+      firing_pin: !type:Container
   - type: ChamberMagazineAmmoProvider
     autoEject: true
   - type: MagazineVisuals
@@ -274,6 +280,9 @@
       - id: RifleStock
         launchAngle: 180
         prob: 0.80
+  - type: ContainerContainer
+    containers:
+      firing_pin: !type:Container
   - type: ContainerFill
     containers:
       firing_pin:
