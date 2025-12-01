@@ -1,3 +1,4 @@
+using Content.Client._RMC14.Chat; // RMC14-edit
 using Content.Client.UserInterface.Systems.Chat.Controls;
 using Content.Shared.CCVar;
 using Content.Shared.Chat;
@@ -32,6 +33,8 @@ public partial class ChatBox : UIWidget
     public bool Main { get; set; }
 
     public ChatSelectChannel SelectedChannel => ChatInput.ChannelSelector.SelectedChannel;
+
+    public readonly Queue<RepeatedMessage> RepeatQueue = new(); // RMC14-edit
 
     public ChatBox()
     {
@@ -79,7 +82,7 @@ public partial class ChatBox : UIWidget
 
         var color = msg.MessageColorOverride ?? msg.Channel.TextColor();
 
-        AddLine(msg.WrappedMessage, color);
+        AddLine(msg.WrappedMessage, color, msg.SenderEntity, msg.Message, msg.Channel, msg.RepeatCheckSender); // RMC14-edit
     }
 
     private void OnHighlightsUpdated(string highlights)
@@ -137,12 +140,16 @@ public partial class ChatBox : UIWidget
     }
     // Sunrise end
 
-    public void AddLine(string message, Color color)
+    public void AddLine(string message, Color color, NetEntity sender, string unwrapped, ChatChannel channel, bool repeatCheckSender) // RMC14-Edit
     {
         var formatted = new FormattedMessage(3);
         formatted.PushColor(color);
         formatted.AddMarkupOrThrow(message);
         formatted.Pop();
+        // RMC14-start
+        if (_entManager.System<CMChatSystem>().TryRepetition(this, Contents, formatted, sender, unwrapped, channel, repeatCheckSender))
+            return;
+        // RMC14-end
         Contents.AddMessage(formatted);
     }
 

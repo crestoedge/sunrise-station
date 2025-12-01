@@ -14,6 +14,7 @@ using Content.Server.Speech.Prototypes;
 using Content.Server.Station.Systems;
 using Content.Shared._Sunrise.Antags.Abductor;
 using Content.Shared._Sunrise.CollectiveMind;
+using Content.Shared._RMC14.Chat;
 using Content.Shared.ActionBlocker;
 using Content.Shared.Administration;
 using Content.Shared.CCVar;
@@ -743,7 +744,7 @@ public sealed partial class ChatSystem : SharedChatSystem
                 _chatManager.ChatMessageToOne(ChatChannel.Whisper, obfuscatedMessage, wrappedUnknownMessage, source, false, session.Channel);
         }
 
-        _replay.RecordServerMessage(new ChatMessage(ChatChannel.Whisper, message, wrappedMessage, GetNetEntity(source), null, MessageRangeHideChatForReplay(range)));
+        _replay.RecordServerMessage(new ChatMessage(ChatChannel.Whisper, message, wrappedMessage, GetNetEntity(source), null, MessageRangeHideChatForReplay(range), repeatCheckSender: !HasComp<ChatRepeatIgnoreSenderComponent>(source))); // RMC14-edit
 
         var ev = new EntitySpokeEvent(source, message, originalMessage, channel, obfuscatedMessage);
         RaiseLocalEvent(source, ev, true);
@@ -980,7 +981,7 @@ public sealed partial class ChatSystem : SharedChatSystem
             _chatManager.ChatMessageToOne(channel, message, wrappedMessage, source, entHideChat, session.Channel, author: author, colorOverride: color);
         }
 
-        _replay.RecordServerMessage(new ChatMessage(channel, message, wrappedMessage, GetNetEntity(source), null, MessageRangeHideChatForReplay(range)));
+        _replay.RecordServerMessage(new ChatMessage(channel, message, wrappedMessage, GetNetEntity(source), null, MessageRangeHideChatForReplay(range),repeatCheckSender: !HasComp<ChatRepeatIgnoreSenderComponent>(source))); // RMC14-edit
     }
 
     /// <summary>
