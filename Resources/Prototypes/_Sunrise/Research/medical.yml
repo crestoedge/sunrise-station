@@ -179,6 +179,7 @@
   cost: 5000
   recipeUnlocks:
   - BorgModuleAdvancedChemical
+  - AdvancedJetInjector
   - AutoMenderBurn
   - AutoMenderBrute
   radioChannels:
