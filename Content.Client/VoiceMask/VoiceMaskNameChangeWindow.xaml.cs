@@ -14,6 +14,8 @@ public sealed partial class VoiceMaskNameChangeWindow : FancyWindow
     public Action<string>? OnNameChange;
     public Action<string?>? OnVerbChange;
     public Action<string>? OnVoiceChange; // Sunrise-Edit
+    public Action? OnToggle;
+    public Action? OnAccentToggle;
 
     private List<(string, string)> _verbs = new();
     private List<TTSVoicePrototype> _voices = new(); // Sunrise-Edit
@@ -34,6 +36,9 @@ public sealed partial class VoiceMaskNameChangeWindow : FancyWindow
             OnVerbChange?.Invoke((string?) args.Button.GetItemMetadata(args.Id));
             SpeechVerbSelector.SelectId(args.Id);
         };
+
+        ToggleButton.OnPressed += args => OnToggle?.Invoke();
+        ToggleAccentButton.OnPressed += args => OnAccentToggle?.Invoke();
     }
 
     public void ReloadVerbs(IPrototypeManager proto)
@@ -93,10 +98,12 @@ public sealed partial class VoiceMaskNameChangeWindow : FancyWindow
     }
     // Sunrise-End
 
-    public void UpdateState(string name, string voice, string? verb) // Sunrise-TTS
+    public void UpdateState(string name, string voice, string? verb, bool active, bool accentHide) // Sunrise-TTS
     {
         NameSelector.Text = name;
         _verb = verb;
+        ToggleButton.Pressed = active;
+        ToggleAccentButton.Pressed = accentHide;
 
         for (int id = 0; id < SpeechVerbSelector.ItemCount; id++)
         {
