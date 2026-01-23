@@ -58,6 +58,7 @@
   cost: 7500
   recipeUnlocks:
   - WeaponLaserCarbine
+  - FiringPinLaser # Starlight-edit
   # Sunrise-Start
   - WeaponMechCombatFiredartLaser
   - WeaponEnergyGun

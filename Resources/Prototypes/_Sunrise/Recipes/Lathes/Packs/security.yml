@@ -318,6 +318,10 @@
     - SpeedLoaderShotgunFlechette
   # Grenade
     - MagazineGrenadeEmpty
+  # Starlight-start
+  # Firing pins
+    - FiringPinLaser
+  # Starlight-end
 ####################################################
 
 - type: latheRecipePack

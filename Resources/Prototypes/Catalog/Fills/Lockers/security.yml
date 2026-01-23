@@ -237,6 +237,7 @@
   id: FillGunSafePistolMk58
   table: !type:AllSelector
     children:
+    - id: BoxFiringPinPistol # Starlight, firing pins
     - id: WeaponPistolMk58
       amount: 4
     - id: MagazinePistol
@@ -260,6 +261,7 @@
   id: FillGunSafeRifleLecter
   table: !type:AllSelector
     children:
+    - id: BoxFiringPin # Starlight, firing pins
     - id: WeaponRifleLecter
       amount: 2
     # Sunrise-Start
@@ -290,6 +292,7 @@
   id: FillGunSafeSubMachineGunDrozd
   table: !type:AllSelector
     children:
+    - id: BoxFiringPinPistol # Starlight, firing pins
     - id: WeaponSubMachineGunDrozd
       amount: 2
     - id: MagazinePistolSubMachineGun
@@ -308,6 +311,7 @@
     containers:
       entity_storage: !type:AllSelector
         children:
+        - id: BoxFiringPin # Starlight, firing pins
         - id: SpeedLoaderShellShotgun # Sunrise-Add
           amount: 2
         - id: WeaponShotgunEnforcer
@@ -328,6 +332,7 @@
     containers:
       entity_storage: !type:AllSelector
         children:
+        - id: BoxFiringPin # Starlight, firing pins
         - id: SpeedLoaderShellShotgun # Sunrise-Add
           amount: 2
         - id: WeaponShotgunKammerer
@@ -354,6 +359,7 @@
   id: FillGunSafeSubMachineGunWt550
   table: !type:AllSelector
     children:
+    - id: BoxFiringPinPistol # Starlight, firing pins
     - id: WeaponSubMachineGunWt550
       amount: 2
     - id: MagazinePistolSubMachineGunTopMounted
@@ -377,5 +383,6 @@
   id: FillGunSafeLaserCarbine
   table: !type:AllSelector
     children:
+    - id: BoxFiringPinLaser # Starlight, firing pins
     - id: WeaponLaserCarbine
       amount: 6 # Sunrise-Edit
