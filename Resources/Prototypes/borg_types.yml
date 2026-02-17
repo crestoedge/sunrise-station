@@ -304,7 +304,7 @@
   dummyPrototype: BorgChassisService
 
   # Functional
-  extraModuleCount: 6
+  extraModuleCount: 8
   moduleWhitelist:
     tags:
     - BorgModuleGeneric
@@ -313,14 +313,18 @@
   defaultModules:
   - BorgModuleStandart
   - BorgModuleMusique
-  - BorgModuleService
+  - BorgModulePaperwork
+  - BorgModuleBartender
+  - BorgModuleCooking
   - BorgModuleClowning
-  - BorgModuleGardening
-  - BorgModuleHarvesting
+  - BorgModuleExtensiveGardening
 
   radioChannels:
   - Science
   - Service
+
+  addComponents:
+  - type: SolutionScanner
 
   # Visual
   inventoryTemplateId: borgTall

@@ -872,47 +872,53 @@
     generated:
       reagents:
       - ReagentId: Water
-        Quantity: 1
+        Quantity: 5
   - type: SolutionRegenerationSwitcher
     options:
     - ReagentId: Water
-      Quantity: 1
+      Quantity: 5
     - ReagentId: Ice
-      Quantity: 1
-    - ReagentId: Coffee
-      Quantity: 1
+      Quantity: 5
     - ReagentId: Cream
-      Quantity: 1
+      Quantity: 5
+    - ReagentId: Milk
+      Quantity: 5
+    - ReagentId: Coffee
+      Quantity: 5
     - ReagentId: Tea
-      Quantity: 1
+      Quantity: 5
     - ReagentId: GreenTea
-      Quantity: 1
-    - ReagentId: IcedTea
-      Quantity: 1
-    - ReagentId: IcedGreenTea
-      Quantity: 1
-    - ReagentId: Cola
-      Quantity: 1
-    - ReagentId: SpaceMountainWind
-      Quantity: 1
-    - ReagentId: DrGibb
-      Quantity: 1
-    - ReagentId: SpaceUp
-      Quantity: 1
-    - ReagentId: TonicWater
-      Quantity: 1
+      Quantity: 5
     - ReagentId: SodaWater
-      Quantity: 1
-    - ReagentId: LemonLime
-      Quantity: 1
+      Quantity: 5
+    - ReagentId: TonicWater
+      Quantity: 5
+    - ReagentId: Cola
+      Quantity: 5
+    - ReagentId: SpaceMountainWind
+      Quantity: 5
+    - ReagentId: SolDry
+      Quantity: 5
+    - ReagentId: DrGibb
+      Quantity: 5
+    - ReagentId: SpaceUp
+      Quantity: 5
+    - ReagentId: EnergyDrink
+      Quantity: 5
     - ReagentId: Sugar
-      Quantity: 1
+      Quantity: 5
     - ReagentId: JuiceOrange
-      Quantity: 1
+      Quantity: 5
     - ReagentId: JuiceLime
-      Quantity: 1
+      Quantity: 5
+    - ReagentId: JuiceLemon
+      Quantity: 5
     - ReagentId: JuiceWatermelon
-      Quantity: 1
+      Quantity: 5
+    - ReagentId: JuicePineapple
+      Quantity: 5
+    - ReagentId: CoconutWater
+      Quantity: 5
 
 - type: entity
   name: service cyborg dispenser (booze)
@@ -925,33 +931,41 @@
     generated:
       reagents:
       - ReagentId: Beer
-        Quantity: 1
+        Quantity: 5
   - type: SolutionRegenerationSwitcher
     options:
     - ReagentId: Beer
-      Quantity: 1
+      Quantity: 5
     - ReagentId: CoffeeLiqueur
-      Quantity: 1
-    - ReagentId: Whiskey
-      Quantity: 1
+      Quantity: 5
     - ReagentId: Wine
-      Quantity: 1
-    - ReagentId: Vodka
-      Quantity: 1
-    - ReagentId: Gin
-      Quantity: 1
-    - ReagentId: Rum
-      Quantity: 1
-    - ReagentId: Tequila
-      Quantity: 1
-    - ReagentId: Vermouth
-      Quantity: 1
-    - ReagentId: Cognac
-      Quantity: 1
+      Quantity: 5
+    - ReagentId: Champagne
+      Quantity: 5
     - ReagentId: Ale
-      Quantity: 1
+      Quantity: 5
     - ReagentId: Mead
-      Quantity: 1
+      Quantity: 5
+    - ReagentId: Whiskey
+      Quantity: 3
+    - ReagentId: Cognac
+      Quantity: 3
+    - ReagentId: Vodka
+      Quantity: 3
+    - ReagentId: Sake
+      Quantity: 3
+    - ReagentId: Gin
+      Quantity: 3
+    - ReagentId: Rum
+      Quantity: 3
+    - ReagentId: Tequila
+      Quantity: 3
+    - ReagentId: Vermouth
+      Quantity: 3
+    - ReagentId: Absinthe
+      Quantity: 3
+    - ReagentId: BlueCuracao
+      Quantity: 3
 
 - type: entity
   parent: BaseItem
@@ -968,7 +982,7 @@
   - type: SolutionContainerManager
     solutions:
       drink:
-        maxVol: 100
+        maxVol: 30
   - type: MixableSolution
     solution: drink
   - type: Shakeable
