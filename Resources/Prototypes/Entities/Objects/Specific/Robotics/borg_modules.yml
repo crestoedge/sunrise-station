@@ -1090,8 +1090,17 @@
     - state: icon-pen
   - type: ItemBorgModule
     hands:
-    - item: BorgShakerSoda
-    - item: BorgShakerBooze
+    # Sunrise-Start
+    - item: BorgSodaDispenser
+    - item: BorgBoozeDispenser
+    - item: DrinkShaker
+      hand:
+        emptyLabel: borg-slot-small-containers-empty
+        emptyRepresentative: DrinkShaker
+        whitelist:
+          components:
+          - FitsInDispenser
+    # Sunrise-End
     - item: Pen
     - item: BooksBag
     - hand:
@@ -1120,13 +1129,6 @@
     - item: RubberStampApproved
     - item: RubberStampDenied
     - item: BorgDropper
-    - item: DrinkShaker
-      hand:
-        emptyLabel: borg-slot-small-containers-empty
-        emptyRepresentative: DrinkShaker
-        whitelist:
-          components:
-          - FitsInDispenser
     - item: BarSpoon
   - type: BorgModuleIcon
     icon: { sprite: Interface/Actions/actions_borg.rsi, state: service-module }

@@ -862,98 +862,6 @@
     affectedByEmp: true
 
 - type: entity
-  name: service cyborg dispenser (soda)
-  parent: BaseBorgShaker
-  id: BorgShakerSoda
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: SolutionRegeneration
-    solution: drink
-    generated:
-      reagents:
-      - ReagentId: Water
-        Quantity: 1
-  - type: SolutionRegenerationSwitcher
-    options:
-    - ReagentId: Water
-      Quantity: 1
-    - ReagentId: Ice
-      Quantity: 1
-    - ReagentId: Coffee
-      Quantity: 1
-    - ReagentId: Cream
-      Quantity: 1
-    - ReagentId: Tea
-      Quantity: 1
-    - ReagentId: GreenTea
-      Quantity: 1
-    - ReagentId: IcedTea
-      Quantity: 1
-    - ReagentId: IcedGreenTea
-      Quantity: 1
-    - ReagentId: Cola
-      Quantity: 1
-    - ReagentId: SpaceMountainWind
-      Quantity: 1
-    - ReagentId: DrGibb
-      Quantity: 1
-    - ReagentId: SpaceUp
-      Quantity: 1
-    - ReagentId: TonicWater
-      Quantity: 1
-    - ReagentId: SodaWater
-      Quantity: 1
-    - ReagentId: LemonLime
-      Quantity: 1
-    - ReagentId: Sugar
-      Quantity: 1
-    - ReagentId: JuiceOrange
-      Quantity: 1
-    - ReagentId: JuiceLime
-      Quantity: 1
-    - ReagentId: JuiceWatermelon
-      Quantity: 1
-
-- type: entity
-  name: service cyborg dispenser (booze)
-  parent: BaseBorgShaker
-  id: BorgShakerBooze
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: SolutionRegeneration
-    solution: drink
-    generated:
-      reagents:
-      - ReagentId: Beer
-        Quantity: 1
-  - type: SolutionRegenerationSwitcher
-    options:
-    - ReagentId: Beer
-      Quantity: 1
-    - ReagentId: CoffeeLiqueur
-      Quantity: 1
-    - ReagentId: Whiskey
-      Quantity: 1
-    - ReagentId: Wine
-      Quantity: 1
-    - ReagentId: Vodka
-      Quantity: 1
-    - ReagentId: Gin
-      Quantity: 1
-    - ReagentId: Rum
-      Quantity: 1
-    - ReagentId: Tequila
-      Quantity: 1
-    - ReagentId: Vermouth
-      Quantity: 1
-    - ReagentId: Cognac
-      Quantity: 1
-    - ReagentId: Ale
-      Quantity: 1
-    - ReagentId: Mead
-      Quantity: 1
-
-- type: entity
   parent: BaseItem
   id: BaseBorgShaker
   name: service cyborg dispenser
@@ -1015,3 +923,58 @@
         reagents:
         - ReagentId: Water
           Quantity: 2
+
+- type: entity
+  parent: SodaDispenserEmpty
+  id: BorgSodaDispenser
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: DrinkCoconutWaterJugBorg
+        - id: DrinkCoffeeJugBorg
+        - id: DrinkColaBottleFullBorg
+        - id: DrinkCreamCartonXLBorg
+        - id: DrinkDrGibbJugBorg
+        - id: DrinkEnergyDrinkJugBorg
+        - id: DrinkGreenTeaJugBorg
+        - id: DrinkIceJugBorg
+        - id: DrinkJuiceLimeCartonXLBorg
+        - id: DrinkJuiceOrangeCartonXLBorg
+        - id: DrinkLemonLimeJugBorg
+        - id: DrinkRootBeerJugBorg
+        - id: DrinkSodaWaterBottleFullBorg
+        - id: DrinkSpaceMountainWindBottleFullBorg
+        - id: DrinkSpaceUpBottleFullBorg
+        - id: DrinkSugarJugBorg
+        - id: DrinkTeaJugBorg
+        - id: DrinkTonicWaterBottleFullBorg
+        - id: DrinkWaterMelonJuiceJugBorg
+  - type: ApcPowerReceiver
+    needsPower: false
+
+- type: entity
+  id: BorgBoozeDispenser
+  parent: BoozeDispenserEmpty
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: DrinkAleBottleFullGrowlerBorg
+        - id: DrinkBeerGrowlerBorg
+        - id: DrinkCoffeeLiqueurBottleFullBorg
+        - id: DrinkCognacBottleFullBorg
+        - id: DrinkGinBottleFullBorg
+        - id: DrinkMeadJugBorg
+        - id: DrinkRumBottleFullBorg
+        - id: DrinkTequilaBottleFullBorg
+        - id: DrinkVermouthBottleFullBorg
+        - id: DrinkVodkaBottleFullBorg
+        - id: DrinkWhiskeyBottleFullBorg
+        - id: DrinkWineBottleFullBorg
+  - type: ApcPowerReceiver
+    needsPower: false
