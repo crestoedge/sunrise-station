@@ -443,7 +443,7 @@
     - state: icon-pen
   - type: ItemBorgModule
     hands:
-    - item: KnifePlastic
+    - item: KitchenKnife
     - item: RollingPin
     - item: Beaker
       hand:
