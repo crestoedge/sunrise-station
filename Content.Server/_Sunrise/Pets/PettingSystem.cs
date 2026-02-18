@@ -12,6 +12,8 @@ using Content.Shared._Sunrise.Pets;
 using Content.Shared.Mind;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
+using Content.Shared.NPC.Prototypes;
+using Content.Shared.NPC.Systems;
 using Content.Shared.Popups;
 using Robust.Server.Player;
 using Robust.Shared.Console;
@@ -36,10 +38,15 @@ public sealed class PettingSystem : SharedPettingSystem
     [Dependency] private readonly ActionsSystem _actions = default!;
     [Dependency] private readonly IConsoleHost _console = default!;
     [Dependency] private readonly IPlayerManager _player = default!;
+    [Dependency] private readonly NpcFactionSystem _npcFactionSystem = default!;
 
     private const int MaxPetNameLenght = 30;
 
     private static readonly EntProtoId PetInterruptAttackActionId = "PetInterruptAttackAction";
+
+    // Фракции (пассивный/атакующий)
+    private static readonly ProtoId<NpcFactionPrototype> PassiveFactionProtoId = "PetsNT";
+    private static readonly ProtoId<NpcFactionPrototype> AttackingFactionProtoId = "AllHostile";
 
     public override void Initialize()
     {
@@ -176,6 +183,9 @@ public sealed class PettingSystem : SharedPettingSystem
         foreach (var pet in masterComponent.Pets)
         {
             UpdatePetOrder(pet, PetOrderType.Follow);
+            // Устанавливаем фракцию питомца на пассивную для предотвращения атак от дружелюбных мобов
+            _npcFactionSystem.ClearFactions(pet);
+            _npcFactionSystem.AddFaction(pet, PassiveFactionProtoId);
         }
     }
 
@@ -188,6 +198,9 @@ public sealed class PettingSystem : SharedPettingSystem
         foreach (var pet in master.Comp.Pets)
         {
             UpdatePetOrder(pet, PetOrderType.Follow);
+            // Устанавливаем фракцию питомца на пассивную для предотвращения атак от дружелюбных мобов
+            _npcFactionSystem.ClearFactions(pet);
+            _npcFactionSystem.AddFaction(pet, PassiveFactionProtoId);
         }
     }
 
@@ -253,6 +266,10 @@ public sealed class PettingSystem : SharedPettingSystem
                     break;
 
                 AddInterruptAction(master.Value);
+
+                // Устанавливаем фракцию питомца на вражескую ко всем, чтобы ИИ мог спокойно атаковать любого (и быть атакованным другими ИИ)
+                _npcFactionSystem.ClearFactions(pet.Owner);
+                _npcFactionSystem.AddFaction(pet.Owner, AttackingFactionProtoId);
 
                 _npc.SetBlackboard(pet,
                     NPCBlackboard.CurrentOrderedTarget,
