@@ -862,112 +862,6 @@
     affectedByEmp: true
 
 - type: entity
-  name: service cyborg dispenser (soda)
-  parent: BaseBorgShaker
-  id: BorgShakerSoda
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: SolutionRegeneration
-    solution: drink
-    generated:
-      reagents:
-      - ReagentId: Water
-        Quantity: 5
-  - type: SolutionRegenerationSwitcher
-    options:
-    - ReagentId: Water
-      Quantity: 5
-    - ReagentId: Ice
-      Quantity: 5
-    - ReagentId: Cream
-      Quantity: 5
-    - ReagentId: Milk
-      Quantity: 5
-    - ReagentId: Coffee
-      Quantity: 5
-    - ReagentId: Tea
-      Quantity: 5
-    - ReagentId: GreenTea
-      Quantity: 5
-    - ReagentId: SodaWater
-      Quantity: 5
-    - ReagentId: TonicWater
-      Quantity: 5
-    - ReagentId: Cola
-      Quantity: 5
-    - ReagentId: SpaceMountainWind
-      Quantity: 5
-    - ReagentId: SolDry
-      Quantity: 5
-    - ReagentId: DrGibb
-      Quantity: 5
-    - ReagentId: SpaceUp
-      Quantity: 5
-    - ReagentId: EnergyDrink
-      Quantity: 5
-    - ReagentId: Sugar
-      Quantity: 5
-    - ReagentId: JuiceOrange
-      Quantity: 5
-    - ReagentId: JuiceLime
-      Quantity: 5
-    - ReagentId: JuiceLemon
-      Quantity: 5
-    - ReagentId: JuiceWatermelon
-      Quantity: 5
-    - ReagentId: JuicePineapple
-      Quantity: 5
-    - ReagentId: CoconutWater
-      Quantity: 5
-
-- type: entity
-  name: service cyborg dispenser (booze)
-  parent: BaseBorgShaker
-  id: BorgShakerBooze
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: SolutionRegeneration
-    solution: drink
-    generated:
-      reagents:
-      - ReagentId: Beer
-        Quantity: 5
-  - type: SolutionRegenerationSwitcher
-    options:
-    - ReagentId: Beer
-      Quantity: 5
-    - ReagentId: CoffeeLiqueur
-      Quantity: 5
-    - ReagentId: Wine
-      Quantity: 5
-    - ReagentId: Champagne
-      Quantity: 5
-    - ReagentId: Ale
-      Quantity: 5
-    - ReagentId: Mead
-      Quantity: 5
-    - ReagentId: Whiskey
-      Quantity: 3
-    - ReagentId: Cognac
-      Quantity: 3
-    - ReagentId: Vodka
-      Quantity: 3
-    - ReagentId: Sake
-      Quantity: 3
-    - ReagentId: Gin
-      Quantity: 3
-    - ReagentId: Rum
-      Quantity: 3
-    - ReagentId: Tequila
-      Quantity: 3
-    - ReagentId: Vermouth
-      Quantity: 3
-    - ReagentId: Absinthe
-      Quantity: 3
-    - ReagentId: BlueCuracao
-      Quantity: 3
-
-- type: entity
   parent: BaseItem
   id: BaseBorgShaker
   name: service cyborg dispenser
@@ -1029,3 +923,65 @@
         reagents:
         - ReagentId: Water
           Quantity: 2
+
+- type: entity
+  id: BorgSodaDispenser
+  parent: SodaDispenserEmpty
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: DrinkCoconutWaterJugBorg
+        - id: DrinkCoffeeJugBorg
+        - id: DrinkColaBottleFullBorg
+        - id: DrinkCreamCartonXLBorg
+        - id: DrinkDrGibbJugBorg
+        - id: DrinkEnergyDrinkJugBorg
+        - id: DrinkGreenTeaJugBorg
+        - id: DrinkIceJugBorg
+        - id: DrinkJuiceLemonBottleFullBorg
+        - id: DrinkJuiceLimeCartonXLBorg
+        - id: DrinkJuiceOrangeCartonXLBorg
+        - id: DrinkLemonLimeJugBorg
+        - id: DrinkMilkBottleFullBorg
+        - id: DrinkRootBeerJugBorg
+        - id: DrinkSodaWaterBottleFullBorg
+        - id: DrinkSpaceMountainWindBottleFullBorg
+        - id: DrinkSolDryBottleFullBorg
+        - id: DrinkSpaceUpBottleFullBorg
+        - id: DrinkSugarJugBorg
+        - id: DrinkTeaJugBorg
+        - id: DrinkTonicWaterBottleFullBorg
+        - id: DrinkWaterMelonJuiceJugBorg
+  - type: ApcPowerReceiver
+    needsPower: false
+
+- type: entity
+  id: BorgBoozeDispenser
+  parent: BoozeDispenserEmpty
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: DrinkAbsintheBottleFullBorg
+        - id: DrinkAleBottleFullGrowlerBorg
+        - id: DrinkBeerGrowlerBorg
+        - id: DrinkBlueCuracaoBottleFullBorg
+        - id: DrinkChampagneBottleFullBorg
+        - id: DrinkCoffeeLiqueurBottleFullBorg
+        - id: DrinkCognacBottleFullBorg
+        - id: DrinkGrenadineBottleFullBorg
+        - id: DrinkGinBottleFullBorg
+        - id: DrinkMeadJugBorg
+        - id: DrinkRumBottleFullBorg
+        - id: DrinkTequilaBottleFullBorg
+        - id: DrinkVermouthBottleFullBorg
+        - id: DrinkVodkaBottleFullBorg
+        - id: DrinkWhiskeyBottleFullBorg
+        - id: DrinkWineBottleFullBorg
+  - type: ApcPowerReceiver
+    needsPower: false

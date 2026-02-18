@@ -397,8 +397,8 @@
     - state: icon-pen
   - type: ItemBorgModule
     hands:
-    - item: BorgShakerSoda
-    - item: BorgShakerBooze
+    - item: BorgSodaDispenser
+    - item: BorgBoozeDispenser
     - item: DrinkShaker
       hand:
         emptyLabel: borg-slot-small-containers-empty
