@@ -1,4 +1,5 @@
 ﻿using Content.Shared._Sunrise.Pets.Prototypes;
+using Content.Shared.NPC.Prototypes;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -33,6 +34,28 @@ public sealed partial class PettableOnInteractComponent : Component
     /// </summary>
     [DataField(required: true)]
     public HashSet<PetOrderType> AllowedOrders = [PetOrderType.Follow, PetOrderType.Stay];
+
+    /// <summary>
+    /// Фракция, которая будет установлена в пассивном режиме, т.е. никого не атакует.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public ProtoId<NpcFactionPrototype> DefaultFaction = "PetsNT";
+
+    /// <summary>
+    /// Фракция, которая будет установлена питомцу, если он атакует кого-то
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public ProtoId<NpcFactionPrototype> AttackingFaction = "AllHostile";
+
+    /// <summary>
+    /// Текущая команда питомцу
+    /// </summary>
+    public PetOrderType CurrentOrder = PetOrderType.Stay;
+
+    /// <summary>
+    /// Предыдущая команда питомцу
+    /// </summary>
+    public PetOrderType PreviousOrder = PetOrderType.Stay;
 }
 
 /// <summary>

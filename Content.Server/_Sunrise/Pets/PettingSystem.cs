@@ -12,6 +12,7 @@ using Content.Shared._Sunrise.Pets;
 using Content.Shared.Mind;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
+using Content.Shared.NPC.Components;
 using Content.Shared.NPC.Prototypes;
 using Content.Shared.NPC.Systems;
 using Content.Shared.Popups;
@@ -44,10 +45,6 @@ public sealed class PettingSystem : SharedPettingSystem
 
     private static readonly EntProtoId PetInterruptAttackActionId = "PetInterruptAttackAction";
 
-    // Фракции (пассивный/атакующий)
-    private static readonly ProtoId<NpcFactionPrototype> PassiveFactionProtoId = "PetsNT";
-    private static readonly ProtoId<NpcFactionPrototype> AttackingFactionProtoId = "AllHostile";
-
     public override void Initialize()
     {
         base.Initialize();
@@ -60,6 +57,7 @@ public sealed class PettingSystem : SharedPettingSystem
 
         SubscribeLocalEvent<PetOnInteractComponent, PetInterruptAttackEvent>(OnAttackInterrupt);
         SubscribeLocalEvent<MobStateChangedEvent>(OnKill);
+        SubscribeLocalEvent<PettableOnInteractComponent, ComponentInit>(EnsureFactionComponent);
     }
 
     #region Events
@@ -179,25 +177,39 @@ public sealed class PettingSystem : SharedPettingSystem
 
         // Поддержка множества питомцев
         // Проходимся по всем питомцам хозяина и заставляем следовать за ним
-        // TODO: Возможность получить только участвовавших в битве и менять приказ лишь им
         foreach (var pet in masterComponent.Pets)
         {
+            // Проверка: атакует ли сущность, чтобы не дать питомцам с приказом оставаться на месте новый приказ
+            if (!IsAttacking(pet))
+                continue;
+
             UpdatePetOrder(pet, PetOrderType.Follow);
-            SetFaction(pet, PassiveFactionProtoId);
         }
     }
 
     /// <summary>
     /// Метод, вызываемый при отмене приказа атаки хозяином.
-    /// Меняет приказ с атаки на следование за хозяином для каждого питомца.
+    /// Меняет приказ с атаки на следование за хозяином для атакующих питомцев.
     /// </summary>
     private void OnAttackInterrupt(Entity<PetOnInteractComponent> master, ref PetInterruptAttackEvent args)
     {
         foreach (var pet in master.Comp.Pets)
         {
+            // Проверка: атакует ли сущность, чтобы не дать питомцам с приказом оставаться на месте новый приказ
+            if (!IsAttacking(pet))
+                continue;
+
             UpdatePetOrder(pet, PetOrderType.Follow);
-            SetFaction(pet, PassiveFactionProtoId);
         }
+    }
+
+    /// <summary>
+    /// Создает для питомцев компонент фракции с дефолтной фракцией, указанной в самом компоненте питомца.
+    /// </summary>
+    private void EnsureFactionComponent(Entity<PettableOnInteractComponent> pet, ref ComponentInit _)
+    {
+        _npcFactionSystem.ClearFactions(pet.Owner);
+        _npcFactionSystem.AddFaction(pet.Owner, pet.Comp.DefaultFaction);
     }
 
     #endregion
@@ -225,6 +237,12 @@ public sealed class PettingSystem : SharedPettingSystem
         _htn.Replan(htn);
     }
 
+    /// <summary>
+    /// Обновляет состояние питомца и его ИИ в соответствии с приказом.
+    /// </summary>
+    /// <param name="pet">Сущность питомца</param>
+    /// <param name="order">Тип приказа</param>
+    /// <param name="target">Цель приказа</param>
     public void UpdatePetOrder(Entity<PettableOnInteractComponent?> pet, PetOrderType order, EntityUid? target = null)
     {
         if (!Resolve(pet, ref pet.Comp))
@@ -236,24 +254,24 @@ public sealed class PettingSystem : SharedPettingSystem
         if (!master.HasValue)
             return;
 
+        // Изменяем фракцию питомца в зависимости от команды атаки
+        // Если новая команда - атаковать, то устанавливаем фракцию атакующего
+        if (order == PetOrderType.Attack)
+            SwitchAttackingFaction(pet, true);
+        // Если текущая команда - атаковать, а новая - не атаковать, то устанавливаем дефолтную фракцию
+        else if (pet.Comp.CurrentOrder == PetOrderType.Attack)
+            SwitchAttackingFaction(pet, false);
+
         // Задаем питомцу задачу следовать за хозяином
         switch (order)
         {
             case PetOrderType.Follow:
-
-                RemoveInterruptAction(master.Value);
-                SetFaction(pet, PassiveFactionProtoId);
-
                 _npc.SetBlackboard(pet,
                     NPCBlackboard.FollowTarget,
                     new EntityCoordinates(master.Value, Vector2.Zero));
                 break;
 
             case PetOrderType.Stay:
-
-                RemoveInterruptAction(master.Value);
-                SetFaction(pet, PassiveFactionProtoId);
-
                 _npc.SetBlackboard(pet,
                     NPCBlackboard.FollowTarget,
                     new EntityCoordinates(pet, Vector2.Zero));
@@ -264,13 +282,22 @@ public sealed class PettingSystem : SharedPettingSystem
                     break;
 
                 AddInterruptAction(master.Value);
-                SetFaction(pet, AttackingFactionProtoId);
 
                 _npc.SetBlackboard(pet,
                     NPCBlackboard.CurrentOrderedTarget,
                     target);
                 break;
         }
+
+        pet.Comp.PreviousOrder = pet.Comp.CurrentOrder;
+        pet.Comp.CurrentOrder = order;
+
+        // Удаляем действие прерывания атаки у владельца, если ни один из его питомцев не атакует на данный момент.
+        if (
+            TryComp<PetOnInteractComponent>(master, out var masterComp)
+            && masterComp.Pets.All(pet => !IsAttacking(pet))
+        )
+            RemoveInterruptAction(master.Value);
 
         UpdatePetNpc(pet, order);
     }
@@ -367,18 +394,35 @@ public sealed class PettingSystem : SharedPettingSystem
             _admin.UpdatePlayerList(actorComp.PlayerSession);
     }
 
+    #endregion
+
+    #region Helpers
+
     /// <summary>
-    /// Устанавливает фракцию питомца (сущности).
-    /// Сделан ради избегания повторения двух одних и тех же строк кода.
+    /// Управляет состоянием атаки сущности.
     /// </summary>
-    /// <param name="pet">EntityUid питомца</param>
+    /// <param name="pet">Entity питомца в связке с компонентом PettableOnInteractComponent</param>
     /// <param name="factionProto">ProtoId фракции</param>
-    private void SetFaction(EntityUid pet, ProtoId<NpcFactionPrototype> factionProto)
+    private void SwitchAttackingFaction(Entity<PettableOnInteractComponent?> pet, bool attacking)
     {
-        _npcFactionSystem.ClearFactions(pet);
-        _npcFactionSystem.AddFaction(pet, PassiveFactionProtoId);
+        if (!Resolve(pet, ref pet.Comp))
+            return;
+
+        _npcFactionSystem.ClearFactions(pet.Owner);
+        _npcFactionSystem.AddFaction(pet.Owner, attacking ? pet.Comp.AttackingFaction : pet.Comp.DefaultFaction);
+    }
+
+    /// <summary>
+    /// Проверяет текущий приказ питомца и возвращает true если это приказ на атаку
+    /// </summary>
+    /// <param name="pet">Сущность питомца, потенциально с компонентом Pettable</param>
+    /// <returns>true если питомец атакует, иначе false</returns>
+    private bool IsAttacking(Entity<PettableOnInteractComponent?> pet)
+    {
+        if (!Resolve(pet, ref pet.Comp))
+            return false;
+        return pet.Comp.CurrentOrder == PetOrderType.Attack;
     }
 
     #endregion
-
 }
