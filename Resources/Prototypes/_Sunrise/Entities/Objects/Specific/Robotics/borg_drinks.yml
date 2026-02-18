@@ -151,13 +151,13 @@
       drink:
         maxVol: 50
         reagents:
-        - ReagentId: LimeJuice
+        - ReagentId: JuiceLime
           Quantity: 50
   - type: SolutionRegeneration
     solution: drink
     generated:
       reagents:
-      - ReagentId: LimeJuice
+      - ReagentId: JuiceLime
         Quantity: 1
 
 - type: entity
@@ -331,13 +331,13 @@
       drink:
         maxVol: 50
         reagents:
-        - ReagentId: WaterMelonJuice
+        - ReagentId: JuiceWaterMelon
           Quantity: 50
   - type: SolutionRegeneration
     solution: drink
     generated:
       reagents:
-      - ReagentId: WaterMelonJuice
+      - ReagentId: JuiceWaterMelon
         Quantity: 1
 
 - type: entity
