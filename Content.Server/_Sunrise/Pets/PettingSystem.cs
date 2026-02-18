@@ -183,9 +183,7 @@ public sealed class PettingSystem : SharedPettingSystem
         foreach (var pet in masterComponent.Pets)
         {
             UpdatePetOrder(pet, PetOrderType.Follow);
-            // Устанавливаем фракцию питомца на пассивную для предотвращения атак от дружелюбных мобов
-            _npcFactionSystem.ClearFactions(pet);
-            _npcFactionSystem.AddFaction(pet, PassiveFactionProtoId);
+            SetFaction(pet, PassiveFactionProtoId);
         }
     }
 
@@ -198,9 +196,7 @@ public sealed class PettingSystem : SharedPettingSystem
         foreach (var pet in master.Comp.Pets)
         {
             UpdatePetOrder(pet, PetOrderType.Follow);
-            // Устанавливаем фракцию питомца на пассивную для предотвращения атак от дружелюбных мобов
-            _npcFactionSystem.ClearFactions(pet);
-            _npcFactionSystem.AddFaction(pet, PassiveFactionProtoId);
+            SetFaction(pet, PassiveFactionProtoId);
         }
     }
 
@@ -246,6 +242,7 @@ public sealed class PettingSystem : SharedPettingSystem
             case PetOrderType.Follow:
 
                 RemoveInterruptAction(master.Value);
+                SetFaction(pet, PassiveFactionProtoId);
 
                 _npc.SetBlackboard(pet,
                     NPCBlackboard.FollowTarget,
@@ -255,6 +252,7 @@ public sealed class PettingSystem : SharedPettingSystem
             case PetOrderType.Stay:
 
                 RemoveInterruptAction(master.Value);
+                SetFaction(pet, PassiveFactionProtoId);
 
                 _npc.SetBlackboard(pet,
                     NPCBlackboard.FollowTarget,
@@ -266,10 +264,7 @@ public sealed class PettingSystem : SharedPettingSystem
                     break;
 
                 AddInterruptAction(master.Value);
-
-                // Устанавливаем фракцию питомца на вражескую ко всем, чтобы ИИ мог спокойно атаковать любого (и быть атакованным другими ИИ)
-                _npcFactionSystem.ClearFactions(pet.Owner);
-                _npcFactionSystem.AddFaction(pet.Owner, AttackingFactionProtoId);
+                SetFaction(pet, AttackingFactionProtoId);
 
                 _npc.SetBlackboard(pet,
                     NPCBlackboard.CurrentOrderedTarget,
@@ -370,6 +365,18 @@ public sealed class PettingSystem : SharedPettingSystem
         // Admin Overlay - работает только тогда, когда в питомце сидит игрок.
         if (TryComp<ActorComponent>(target, out var actorComp))
             _admin.UpdatePlayerList(actorComp.PlayerSession);
+    }
+
+    /// <summary>
+    /// Устанавливает фракцию питомца (сущности).
+    /// Сделан ради избегания повторения двух одних и тех же строк кода.
+    /// </summary>
+    /// <param name="pet">EntityUid питомца</param>
+    /// <param name="factionProto">ProtoId фракции</param>
+    private void SetFaction(EntityUid pet, ProtoId<NpcFactionPrototype> factionProto)
+    {
+        _npcFactionSystem.ClearFactions(pet);
+        _npcFactionSystem.AddFaction(pet, PassiveFactionProtoId);
     }
 
     #endregion
