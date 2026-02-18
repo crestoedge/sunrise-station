@@ -461,42 +461,42 @@
           - FitsInDispenser
     - item: ReagentContainerFlour
       hand:
-        emptyLabel: borg-slot-small-containers-empty
+        emptyLabel: borg-slot-food-empty
         emptyRepresentative: FoodBreadPlain
         whitelist:
           components:
           - Edible
     - item: FoodCondimentBottleEnzyme
       hand:
-        emptyLabel: borg-slot-small-containers-empty
+        emptyLabel: bborg-slot-food-empty
         emptyRepresentative: FoodBreadPlain
         whitelist:
           components:
           - Edible
     - item: null
       hand:
-        emptyLabel: borg-slot-small-containers-empty
+        emptyLabel: borg-slot-food-empty
         emptyRepresentative: FoodBreadPlain
         whitelist:
           components:
           - Edible
     - item: null
       hand:
-        emptyLabel: borg-slot-small-containers-empty
+        emptyLabel: bborg-slot-food-empty
         emptyRepresentative: FoodBreadPlain
         whitelist:
           components:
           - Edible
     - item: null
       hand:
-        emptyLabel: borg-slot-small-containers-empty
+        emptyLabel: borg-slot-food-empty
         emptyRepresentative: FoodBreadPlain
         whitelist:
           components:
           - Edible
     - item: null
       hand:
-        emptyLabel: borg-slot-small-containers-empty
+        emptyLabel: bborg-slot-food-empty
         emptyRepresentative: FoodBreadPlain
         whitelist:
           components:
@@ -523,21 +523,21 @@
     - item: PlantBag
     - item: null
       hand:
-        emptyLabel: borg-slot-small-containers-empty
+        emptyLabel: bborg-slot-food-empty
         emptyRepresentative: FoodApple
         whitelist:
           components:
           - Edible
     - item: null
       hand:
-        emptyLabel: borg-slot-small-containers-empty
+        emptyLabel: borg-slot-seeds-empty
         emptyRepresentative: AppleSeeds
         whitelist:
           components:
           - Seed
     - item: null
       hand:
-        emptyLabel: borg-slot-small-containers-empty
+        emptyLabel: borg-slot-seeds-empty
         emptyRepresentative: AppleSeeds
         whitelist:
           components:
