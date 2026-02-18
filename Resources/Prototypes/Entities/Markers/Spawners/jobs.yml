@@ -289,7 +289,7 @@
     job_id: Borg
   # Sunrise-start
   - type: PreferredSpawn
-    preferredSpawnTypes: [ Job, LateJoin ]
+    preferredSpawnTypes: [ Job ]
   # Sunrise-end
   - type: Sprite
     layers:
