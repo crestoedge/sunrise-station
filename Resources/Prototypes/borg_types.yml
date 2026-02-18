@@ -310,6 +310,7 @@
     - BorgModuleGeneric
     - BorgModuleService
 
+  # Sunrise-Start
   defaultModules:
   - BorgModuleStandart
   - BorgModuleMusique
@@ -318,6 +319,7 @@
   - BorgModuleCooking
   - BorgModuleClowning
   - BorgModuleExtensiveGardening
+  # Sunrise-End
 
   radioChannels:
   - Science
