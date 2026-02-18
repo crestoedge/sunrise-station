@@ -468,7 +468,7 @@
           - Edible
     - item: FoodCondimentBottleEnzyme
       hand:
-        emptyLabel: bborg-slot-food-empty
+        emptyLabel: borg-slot-food-empty
         emptyRepresentative: FoodBreadPlain
         whitelist:
           components:
@@ -482,7 +482,7 @@
           - Edible
     - item: null
       hand:
-        emptyLabel: bborg-slot-food-empty
+        emptyLabel: borg-slot-food-empty
         emptyRepresentative: FoodBreadPlain
         whitelist:
           components:
@@ -496,7 +496,7 @@
           - Edible
     - item: null
       hand:
-        emptyLabel: bborg-slot-food-empty
+        emptyLabel: borg-slot-food-empty
         emptyRepresentative: FoodBreadPlain
         whitelist:
           components:
@@ -523,7 +523,7 @@
     - item: PlantBag
     - item: null
       hand:
-        emptyLabel: bborg-slot-food-empty
+        emptyLabel: borg-slot-food-empty
         emptyRepresentative: FoodApple
         whitelist:
           components:

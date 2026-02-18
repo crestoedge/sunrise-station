@@ -391,13 +391,13 @@
       drink:
         maxVol: 50
         reagents:
-        - ReagentId: JuiceWaterMelon
+        - ReagentId: JuiceWatermelon
           Quantity: 50
   - type: SolutionRegeneration
     solution: drink
     generated:
       reagents:
-      - ReagentId: JuiceWaterMelon
+      - ReagentId: JuiceWatermelon
         Quantity: 3
 
 # Booze (alcohol)
