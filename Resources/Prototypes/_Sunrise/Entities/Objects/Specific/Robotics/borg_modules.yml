@@ -394,7 +394,7 @@
   - type: Sprite
     layers:
     - state: service
-    - state: icon-pen
+    - state: icon-bartender
   - type: ItemBorgModule
     hands:
     - item: BorgSodaDispenser
@@ -440,7 +440,7 @@
   - type: Sprite
     layers:
     - state: service
-    - state: icon-pen
+    - state: icon-cook
   - type: ItemBorgModule
     hands:
     - item: KitchenKnife
