@@ -48,14 +48,9 @@ public sealed partial class PettableOnInteractComponent : Component
     public ProtoId<NpcFactionPrototype> AttackingFaction = "AllHostile";
 
     /// <summary>
-    /// Текущая команда питомцу
+    /// Текущая команда питомцу (команда, которую он сейчас выполняет)
     /// </summary>
     public PetOrderType CurrentOrder = PetOrderType.Stay;
-
-    /// <summary>
-    /// Предыдущая команда питомцу
-    /// </summary>
-    public PetOrderType PreviousOrder = PetOrderType.Stay;
 }
 
 /// <summary>

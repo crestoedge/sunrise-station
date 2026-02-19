@@ -289,7 +289,6 @@ public sealed class PettingSystem : SharedPettingSystem
                 break;
         }
 
-        pet.Comp.PreviousOrder = pet.Comp.CurrentOrder;
         pet.Comp.CurrentOrder = order;
 
         // Удаляем действие прерывания атаки у владельца, если ни один из его питомцев не атакует на данный момент.
