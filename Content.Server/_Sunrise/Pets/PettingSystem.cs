@@ -254,24 +254,23 @@ public sealed class PettingSystem : SharedPettingSystem
         if (!master.HasValue)
             return;
 
-        // Изменяем фракцию питомца в зависимости от команды атаки
-        // Если новая команда - атаковать, то устанавливаем фракцию атакующего
-        if (order == PetOrderType.Attack)
-            SwitchAttackingFaction(pet, true);
-        // Если текущая команда - атаковать, а новая - не атаковать, то устанавливаем дефолтную фракцию
-        else if (pet.Comp.CurrentOrder == PetOrderType.Attack)
-            SwitchAttackingFaction(pet, false);
-
         // Задаем питомцу задачу следовать за хозяином
         switch (order)
         {
             case PetOrderType.Follow:
+                // Устанавливаем фракцию по умолчанию
+                if (pet.Comp.CurrentOrder == PetOrderType.Attack)
+                    SwitchAttackingFaction(pet, false);
+
                 _npc.SetBlackboard(pet,
                     NPCBlackboard.FollowTarget,
                     new EntityCoordinates(master.Value, Vector2.Zero));
                 break;
 
             case PetOrderType.Stay:
+                if (pet.Comp.CurrentOrder == PetOrderType.Attack)
+                    SwitchAttackingFaction(pet, false);
+
                 _npc.SetBlackboard(pet,
                     NPCBlackboard.FollowTarget,
                     new EntityCoordinates(pet, Vector2.Zero));
@@ -280,6 +279,10 @@ public sealed class PettingSystem : SharedPettingSystem
             case PetOrderType.Attack:
                 if (!target.HasValue)
                     break;
+
+                // Устанавливаем фракцию для атаки
+                if (pet.Comp.CurrentOrder != PetOrderType.Attack)
+                    SwitchAttackingFaction(pet, true);
 
                 AddInterruptAction(master.Value);
 
