@@ -50,6 +50,7 @@ public sealed partial class PettableOnInteractComponent : Component
     /// <summary>
     /// Текущая команда питомцу (команда, которую он сейчас выполняет)
     /// </summary>
+    [ViewVariables(VVAccess.ReadOnly)]
     public PetOrderType CurrentOrder = PetOrderType.Stay;
 }
 
