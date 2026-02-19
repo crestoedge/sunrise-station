@@ -39,7 +39,7 @@ public sealed class PettingSystem : SharedPettingSystem
     [Dependency] private readonly ActionsSystem _actions = default!;
     [Dependency] private readonly IConsoleHost _console = default!;
     [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly NpcFactionSystem _npcFactionSystem = default!;
+    [Dependency] private readonly NpcFactionSystem _npcFaction = default!;
 
     private const int MaxPetNameLenght = 30;
 
@@ -206,10 +206,10 @@ public sealed class PettingSystem : SharedPettingSystem
     /// <summary>
     /// Создает для питомцев компонент фракции с дефолтной фракцией, указанной в самом компоненте питомца.
     /// </summary>
-    private void EnsureFactionComponent(Entity<PettableOnInteractComponent> pet, ref ComponentInit _)
+    private void EnsureFactionComponent(Entity<PettableOnInteractComponent> pet, ref ComponentInit args)
     {
-        _npcFactionSystem.ClearFactions(pet.Owner);
-        _npcFactionSystem.AddFaction(pet.Owner, pet.Comp.DefaultFaction);
+        _npcFaction.ClearFactions(pet.Owner);
+        _npcFaction.AddFaction(pet.Owner, pet.Comp.DefaultFaction);
     }
 
     #endregion
@@ -294,7 +294,7 @@ public sealed class PettingSystem : SharedPettingSystem
         // Удаляем действие прерывания атаки у владельца, если ни один из его питомцев не атакует на данный момент.
         if (
             TryComp<PetOnInteractComponent>(master, out var masterComp)
-            && masterComp.Pets.All(pet => !IsAttacking(pet))
+            && masterComp.Pets.All(p => !IsAttacking(p))
         )
             RemoveInterruptAction(master.Value);
 
@@ -397,18 +397,20 @@ public sealed class PettingSystem : SharedPettingSystem
 
     #region Helpers
 
+
     /// <summary>
-    /// Управляет состоянием атаки сущности.
+    /// Упрощает управление фракцией сущности. Задает атакующую/дефолтную фракцию в зависимости от булевой.
     /// </summary>
-    /// <param name="pet">Entity питомца в связке с компонентом PettableOnInteractComponent</param>
-    /// <param name="factionProto">ProtoId фракции</param>
+    /// <param name="pet">Сущность питомца, потенциально с компонентом Pettable</param>
+    /// <param name="attacking">true - устанавливает атакующую фракцию, false - дефолтную</param>
     private void SwitchAttackingFaction(Entity<PettableOnInteractComponent?> pet, bool attacking)
     {
         if (!Resolve(pet, ref pet.Comp))
             return;
 
-        _npcFactionSystem.ClearFactions(pet.Owner);
-        _npcFactionSystem.AddFaction(pet.Owner, attacking ? pet.Comp.AttackingFaction : pet.Comp.DefaultFaction);
+        _npcFaction.ClearFactions(pet.Owner);
+        var nextFaction = attacking ? pet.Comp.AttackingFaction : pet.Comp.DefaultFaction;
+        _npcFaction.AddFaction(pet.Owner, nextFaction);
     }
 
     /// <summary>
@@ -420,6 +422,7 @@ public sealed class PettingSystem : SharedPettingSystem
     {
         if (!Resolve(pet, ref pet.Comp))
             return false;
+
         return pet.Comp.CurrentOrder == PetOrderType.Attack;
     }
 
