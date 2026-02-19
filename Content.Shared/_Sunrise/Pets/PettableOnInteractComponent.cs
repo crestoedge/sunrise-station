@@ -38,13 +38,13 @@ public sealed partial class PettableOnInteractComponent : Component
     /// <summary>
     /// Фракция, которая будет установлена в пассивном режиме, т.е. никого не атакует.
     /// </summary>
-    [DataField, AutoNetworkedField]
+    [DataField]
     public ProtoId<NpcFactionPrototype> DefaultFaction = "PetsNT";
 
     /// <summary>
     /// Фракция, которая будет установлена питомцу, если он атакует кого-то
     /// </summary>
-    [DataField, AutoNetworkedField]
+    [DataField]
     public ProtoId<NpcFactionPrototype> AttackingFaction = "AllHostile";
 
     /// <summary>
