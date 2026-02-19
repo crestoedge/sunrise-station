@@ -537,13 +537,13 @@
       drink:
         maxVol: 50
         reagents:
-        - ReagentId: Gin
+        - ReagentId: Grenadine
           Quantity: 50
   - type: SolutionRegeneration
     solution: drink
     generated:
       reagents:
-      - ReagentId: Gin
+      - ReagentId: Grenadine
         Quantity: 2
 
 - type: entity
