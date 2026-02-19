@@ -278,7 +278,7 @@ public sealed class PettingSystem : SharedPettingSystem
 
             case PetOrderType.Attack:
                 if (!target.HasValue)
-                    break;
+                    return; // Не break - предотвращаем некорректный вызов без цели и обходим обновление состояния
 
                 // Устанавливаем фракцию для атаки
                 if (pet.Comp.CurrentOrder != PetOrderType.Attack)
