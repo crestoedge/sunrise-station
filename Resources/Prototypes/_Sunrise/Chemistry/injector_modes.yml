@@ -1,0 +1,20 @@
+﻿## BorgHyposprays
+- type: injectorMode
+  abstract: true
+  id: BaseBorgHyposprayMode
+  injectSound: /Audio/Items/hypospray.ogg
+  injectPopupTarget: injector-component-feel-prick-message
+  injectOnUse: true
+  mobTime: 0.5
+  delayPerVolume: 0
+  transferAmounts:
+  - 5
+  - 10
+
+- type: injectorMode
+  parent: [ BaseBorgHyposprayMode, BaseInjectMode ]
+  id: BorgHyposprayInjectMode
+
+- type: injectorMode
+  parent: [ BaseBorgHyposprayMode, BaseDynamicMode ]
+  id: BorgHyposprayDynamicMode

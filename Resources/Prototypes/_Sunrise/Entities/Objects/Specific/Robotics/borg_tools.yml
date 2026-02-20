@@ -251,6 +251,30 @@
     keepSolution: false
   - type: BorgHypospray
 
+# В сравнении с обычным гипо - 0.5с общий делэй между инъекциями
+# Только в обычном гипо это кулдаун после ввода
+# В этом - это DoAfter до ввода
+- type: entity
+  parent: Hypospray
+  id: HypoBorgMedicalUniversal
+  name: universal medical robot hypospray
+  description: a cyborg version of hypospray - requires patients to hold still, but can inject more reagent at once
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: SolutionContainerManager
+    solutions:
+      hypospray:
+        maxVol: 30
+  - type: Injector
+    solutionName: hypospray
+    ignoreClosed: false
+    activeModeProtoId: BorgHyposprayDynamicMode
+    allowedModes:
+    - BorgHyposprayDynamicMode
+    - BorgHyposprayInjectMode
+  - type: UseDelay
+    delay: 0.0
+
 - type: entity
   name: proto-kinetic robot accelerator
   id: WeaponProtoKineticAcceleratorBorg

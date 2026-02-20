@@ -987,7 +987,7 @@
   - type: ItemBorgModule
     hands:
     - item: HypoBorgMedicalAdvanced # Sunrise-Edit
-    - item: Hypospray # Sunrise-Edit
+    - item: HypoBorgMedicalUniversal # Sunrise-Edit
     - item: SyringeBluespace # Sunrise-Edit
    # - item: BorgDropper # Sunrise-Edit
     - item: Beaker
