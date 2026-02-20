@@ -1,6 +1,12 @@
 - type: entity
+  id: BaseDrinkBorg
+  components:
+  - type: Unremoveable
+    deleteOnDrop: true
+
+- type: entity
   id: DrinkCoconutWaterJugBorg
-  parent: DrinkCoconutWaterJug
+  parent: [ DrinkCoconutWaterJug, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -18,7 +24,7 @@
 
 - type: entity
   id: DrinkCoffeeJugBorg
-  parent: DrinkCoffeeJug
+  parent: [ DrinkCoffeeJug, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -36,7 +42,7 @@
 
 - type: entity
   id: DrinkColaBottleFullBorg
-  parent: DrinkColaBottleFull
+  parent: [ DrinkColaBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -54,7 +60,7 @@
 
 - type: entity
   id: DrinkCreamCartonXLBorg
-  parent: DrinkCreamCartonXL
+  parent: [ DrinkCreamCartonXL, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -72,7 +78,7 @@
 
 - type: entity
   id: DrinkDrGibbJugBorg
-  parent: DrinkDrGibbJug
+  parent: [ DrinkDrGibbJug, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -90,7 +96,7 @@
 
 - type: entity
   id: DrinkEnergyDrinkJugBorg
-  parent: DrinkEnergyDrinkJug
+  parent: [ DrinkEnergyDrinkJug, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -108,7 +114,7 @@
 
 - type: entity
   id: DrinkGreenTeaJugBorg
-  parent: DrinkGreenTeaJug
+  parent: [ DrinkGreenTeaJug, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -126,7 +132,7 @@
 
 - type: entity
   id: DrinkIceJugBorg
-  parent: DrinkIceJug
+  parent: [ DrinkIceJug, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -144,7 +150,7 @@
 
 - type: entity
   id: DrinkJuiceLemonBottleFullBorg
-  parent: DrinkBottlePlasticBaseFull
+  parent: [ DrinkBottlePlasticBaseFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -164,7 +170,7 @@
 
 - type: entity
   id: DrinkJuiceLimeCartonXLBorg
-  parent: DrinkJuiceLimeCartonXL
+  parent: [ DrinkJuiceLimeCartonXL, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -182,7 +188,7 @@
 
 - type: entity
   id: DrinkJuiceOrangeCartonXLBorg
-  parent: DrinkJuiceOrangeCartonXL
+  parent: [ DrinkJuiceOrangeCartonXL, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -200,7 +206,7 @@
 
 - type: entity
   id: DrinkLemonLimeJugBorg
-  parent: DrinkLemonLimeJug
+  parent: [ DrinkLemonLimeJug, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -218,7 +224,7 @@
 
 - type: entity
   id: DrinkMilkBottleFullBorg
-  parent: DrinkBottlePlasticBaseFull
+  parent: [ DrinkBottlePlasticBaseFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -238,7 +244,7 @@
 
 - type: entity
   id: DrinkRootBeerJugBorg
-  parent: DrinkRootBeerJug
+  parent: [ DrinkRootBeerJug, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -256,7 +262,7 @@
 
 - type: entity
   id: DrinkSodaWaterBottleFullBorg
-  parent: DrinkSodaWaterBottleFull
+  parent: [ DrinkSodaWaterBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -274,7 +280,7 @@
 
 - type: entity
   id: DrinkSpaceMountainWindBottleFullBorg
-  parent: DrinkSpaceMountainWindBottleFull
+  parent: [ DrinkSpaceMountainWindBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -292,7 +298,7 @@
 
 - type: entity
   id: DrinkSolDryBottleFullBorg
-  parent: DrinkBottlePlasticBaseFull
+  parent: [ DrinkBottlePlasticBaseFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -312,7 +318,7 @@
 
 - type: entity
   id: DrinkSpaceUpBottleFullBorg
-  parent: DrinkSpaceUpBottleFull
+  parent: [ DrinkSpaceUpBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -330,7 +336,7 @@
 
 - type: entity
   id: DrinkSugarJugBorg
-  parent: DrinkSugarJug
+  parent: [ DrinkSugarJug, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -348,7 +354,7 @@
 
 - type: entity
   id: DrinkTeaJugBorg
-  parent: DrinkTeaJug
+  parent: [ DrinkTeaJug, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -366,7 +372,7 @@
 
 - type: entity
   id: DrinkTonicWaterBottleFullBorg
-  parent: DrinkTonicWaterBottleFull
+  parent: [ DrinkTonicWaterBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -384,7 +390,7 @@
 
 - type: entity
   id: DrinkWaterMelonJuiceJugBorg
-  parent: DrinkWaterMelonJuiceJug
+  parent: [ DrinkWaterMelonJuiceJug, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -404,7 +410,7 @@
 
 - type: entity
   id: DrinkAbsintheBottleFullBorg
-  parent: DrinkAbsintheBottleFull
+  parent: [ DrinkAbsintheBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -422,7 +428,7 @@
 
 - type: entity
   id: DrinkAleBottleFullGrowlerBorg
-  parent: DrinkAleBottleFullGrowler
+  parent: [ DrinkAleBottleFullGrowler, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -440,7 +446,7 @@
 
 - type: entity
   id: DrinkBeerGrowlerBorg
-  parent: DrinkBeerGrowler
+  parent: [ DrinkBeerGrowler, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -458,7 +464,7 @@
 
 - type: entity
   id: DrinkBlueCuracaoBottleFullBorg
-  parent: DrinkBlueCuracaoBottleFull
+  parent: [ DrinkBlueCuracaoBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -476,7 +482,7 @@
 
 - type: entity
   id: DrinkChampagneBottleFullBorg
-  parent: DrinkChampagneBottleFull
+  parent: [ DrinkChampagneBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -494,7 +500,7 @@
 
 - type: entity
   id: DrinkCoffeeLiqueurBottleFullBorg
-  parent: DrinkCoffeeLiqueurBottleFull
+  parent: [ DrinkCoffeeLiqueurBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -512,7 +518,7 @@
 
 - type: entity
   id: DrinkCognacBottleFullBorg
-  parent: DrinkCognacBottleFull
+  parent: [ DrinkCognacBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -530,7 +536,7 @@
 
 - type: entity
   id: DrinkGrenadineBottleFullBorg
-  parent: DrinkGrenadineBottleFull
+  parent: [ DrinkGrenadineBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -548,7 +554,7 @@
 
 - type: entity
   id: DrinkGinBottleFullBorg
-  parent: DrinkGinBottleFull
+  parent: [ DrinkGinBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -566,7 +572,7 @@
 
 - type: entity
   id: DrinkMeadJugBorg
-  parent: DrinkMeadJug
+  parent: [ DrinkMeadJug, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -584,7 +590,7 @@
 
 - type: entity
   id: DrinkRumBottleFullBorg
-  parent: DrinkRumBottleFull
+  parent: [ DrinkRumBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -602,7 +608,7 @@
 
 - type: entity
   id: DrinkTequilaBottleFullBorg
-  parent: DrinkTequilaBottleFull
+  parent: [ DrinkTequilaBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -620,7 +626,7 @@
 
 - type: entity
   id: DrinkVermouthBottleFullBorg
-  parent: DrinkVermouthBottleFull
+  parent: [ DrinkVermouthBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -638,7 +644,7 @@
 
 - type: entity
   id: DrinkVodkaBottleFullBorg
-  parent: DrinkVodkaBottleFull
+  parent: [ DrinkVodkaBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -656,7 +662,7 @@
 
 - type: entity
   id: DrinkWhiskeyBottleFullBorg
-  parent: DrinkWhiskeyBottleFull
+  parent: [ DrinkWhiskeyBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
@@ -674,7 +680,7 @@
 
 - type: entity
   id: DrinkWineBottleFullBorg
-  parent: DrinkWineBottleFull
+  parent: [ DrinkWineBottleFull, BaseDrinkBorg ]
   components:
   - type: SolutionContainerManager
     solutions:
