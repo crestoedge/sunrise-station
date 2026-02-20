@@ -15,8 +15,3 @@ borg-slot-modules-empty = Модули
 borg-slot-powercell-empty = Батарейки
 borg-slot-inflatable-door-empty = Надувные двери
 borg-slot-inflatable-wall-empty = Надувные стены
-
-# Sunrise-start
-borg-slot-food-empty = Еда
-borg-slot-seeds-empty = Семена растений
-# Sunrise-end
