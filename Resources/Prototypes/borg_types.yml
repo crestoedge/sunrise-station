@@ -304,7 +304,7 @@
   dummyPrototype: BorgChassisService
 
   # Functional
-  extraModuleCount: 8
+  extraModuleCount: 6
   moduleWhitelist:
     tags:
     - BorgModuleGeneric
