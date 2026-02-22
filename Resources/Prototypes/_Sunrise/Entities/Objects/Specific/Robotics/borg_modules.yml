@@ -344,5 +344,5 @@
     layers:
     - state: generic
   - type: BorgModuleInnate
-    useItems:
-      - Floodlight
+    toggleItems:
+      - BorgInnateFloodlight

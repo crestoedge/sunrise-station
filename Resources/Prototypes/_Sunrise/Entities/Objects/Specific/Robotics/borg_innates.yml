@@ -1,0 +1,43 @@
+- type: entity
+  name: floodlight
+  id: BorgInnateFloodlight
+  parent: BaseLamp
+  description: A pole with powerful mounted lights on it.
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    sprite: Objects/Misc/Lights/lights.rsi
+    layers:
+      - state: floodlight
+        map: [ "base" ]
+      - state: floodlight-on
+        shader: unshaded
+        visible: false
+        map: [ "light" ]
+  - type: HandheldLight
+    addPrefix: true
+    blinkingBehaviourId: blinking
+    radiatingBehaviourId: radiating
+  - type: LightBehaviour
+    behaviours:
+      - !type:FadeBehaviour
+        id: radiating
+        maxDuration: 2.0
+        startValue: 3.0
+        endValue: 2.0
+        isLooped: true
+        reverseWhenFinished: true
+      - !type:PulseBehaviour
+        id: blinking
+        interpolate: Nearest
+        maxDuration: 1.0
+        startValue: 0.1
+        endValue: 2.0
+        isLooped: true
+  - type: PointLight
+    enabled: false
+    radius: 8
+    energy: 5
+    netsync: false
+

@@ -66,8 +66,9 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     private void OnUninstalled(Entity<BorgModuleInnateComponent> module, ref BorgModuleUninstalledEvent args)
     {
         // Выключаем включенные предметы
-        foreach (var enabled in module.Comp.ToggledOn)
-            UseInHand(args.ChassisEnt, enabled);
+        foreach (var enabledItem in module.Comp.ToggledOn)
+            _interactions.UseInHandInteraction(args.ChassisEnt, enabledItem, false, true);
+            // UseInHand(args.ChassisEnt, enabled);
 
         // Чистим сущностей и компоненты
         foreach (var action in module.Comp.Actions)
@@ -148,7 +149,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     }
 
     /// <summary>
-    /// TODO
+    /// Создает предмет для использования через экшен, при чем считает его состояние переключаемым
     /// </summary>
     private void AddToggleItem(
         EntProtoId itemProto,
@@ -231,7 +232,8 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     /// </summary>
     private void OnInnateUseItem(Entity<BorgModuleInnateComponent> ent, ref ModuleInnateUseItemEvent args)
     {
-        UseInHand(args.Performer, args.Item);
+        _interactions.UseInHandInteraction(args.Performer, args.Item, false, true);
+        // UseInHand(args.Performer, args.Item);
         args.Handled = true;
     }
 
@@ -240,7 +242,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     /// </summary>
     private void OnInnateToggleItem(Entity<BorgModuleInnateComponent> ent, ref ModuleInnateToggleItemEvent args)
     {
-        UseInHand(args.Performer, args.Item);
+        _interactions.UseInHandInteraction(args.Performer, args.Item, false, true);
 
         // Пытаемся удалить из списка включенных предметов
         // если успешно удалили - значит ставим дефолтный цвет иконки
