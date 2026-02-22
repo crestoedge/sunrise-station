@@ -6,6 +6,7 @@ using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Item.ItemToggle.Components;
 using Content.Shared.Popups;
+using Content.Shared.Silicons.Borgs.Components;
 using Content.Shared.Temperature;
 using Content.Shared.Toggleable;
 using Content.Shared.Verbs;
@@ -84,7 +85,7 @@ public sealed class ItemToggleSystem : EntitySystem
             return;
 
         // Sunrise-Start
-        if (HasComp<ItemComponent>(ent.Owner) && TryComp<HandsComponent>(args.User, out var handsComp))
+        if (HasComp<ItemComponent>(ent.Owner) && TryComp<HandsComponent>(args.User, out var handsComp) && !HasComp<BorgChassisComponent>(args.User))
         {
             if (!_handsSystem.TryGetActiveItem((args.User, handsComp), out var itemInHand))
                 return;

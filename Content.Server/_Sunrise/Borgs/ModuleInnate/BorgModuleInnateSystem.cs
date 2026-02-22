@@ -26,6 +26,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
 
     // Прототипы действий над предметами
     private static readonly EntProtoId InnateUseItemAction = "ModuleInnateUseItemAction";
+    private static readonly EntProtoId InnateToggleItemAction = "ModuleInnateToggleItemAction";
     private static readonly EntProtoId InnateInteractionItemAction = "ModuleInnateInteractionItemAction";
 
     public override void Initialize()
@@ -35,8 +36,9 @@ public sealed class BorgModuleInnateSystem : EntitySystem
         SubscribeLocalEvent<BorgModuleInnateComponent, BorgModuleInstalledEvent>(OnInstalled);
         SubscribeLocalEvent<BorgModuleInnateComponent, BorgModuleUninstalledEvent>(OnUninstalled);
 
-        SubscribeLocalEvent<BorgModuleInnateComponent, ModuleInnateUseItem>(OnInnateUseItem);
-        SubscribeLocalEvent<BorgModuleInnateComponent, ModuleInnateInteractionItem>(OnInnateInteractionItem);
+        SubscribeLocalEvent<BorgModuleInnateComponent, ModuleInnateUseItemEvent>(OnInnateUseItem);
+        SubscribeLocalEvent<BorgModuleInnateComponent, ModuleInnateToggleItemEvent>(OnInnateToggleItem);
+        SubscribeLocalEvent<BorgModuleInnateComponent, ModuleInnateInteractionItemEvent>(OnInnateInteractionItem);
     }
 
     /// <summary>
@@ -45,12 +47,15 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     private void OnInstalled(Entity<BorgModuleInnateComponent> module, ref BorgModuleInstalledEvent args)
     {
         var containerManager = EnsureComp<ContainerManagerComponent>(args.ChassisEnt);
-        _containers.EnsureContainer<Container>(args.ChassisEnt, InnateItemsContainerId, containerManager);
+        var container = _containers.EnsureContainer<Container>(
+            args.ChassisEnt,
+            InnateItemsContainerId,
+            containerManager
+        );
+        // Позволяет встраивать предметы-светильники в модуль
+        container.OccludesLight = false;
 
         EntityManager.AddComponents(args.ChassisEnt, module.Comp.InnateComponents);
-
-        if (!_containers.TryGetContainer(args.ChassisEnt, InnateItemsContainerId, out var container))
-            return;
 
         AddItems(args.ChassisEnt, module, container);
     }
@@ -60,6 +65,11 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     /// </summary>
     private void OnUninstalled(Entity<BorgModuleInnateComponent> module, ref BorgModuleUninstalledEvent args)
     {
+        // Выключаем включенные предметы
+        foreach (var enabled in module.Comp.ToggledOn)
+            UseInHand(args.ChassisEnt, enabled);
+
+        // Чистим сущностей и компоненты
         foreach (var action in module.Comp.Actions)
         {
             _actions.RemoveAction(args.ChassisEnt, action);
@@ -68,10 +78,11 @@ public sealed class BorgModuleInnateSystem : EntitySystem
         foreach (var item in module.Comp.AddedInnateItems)
             QueueDel(item);
 
+        EntityManager.RemoveComponents(args.ChassisEnt, module.Comp.InnateComponents);
+
+        // Чистим списки очищения
         module.Comp.Actions.Clear();
         module.Comp.AddedInnateItems.Clear();
-
-        EntityManager.RemoveComponents(args.ChassisEnt, module.Comp.InnateComponents);
     }
 
     /// <summary>
@@ -94,6 +105,14 @@ public sealed class BorgModuleInnateSystem : EntitySystem
 
             AddInteractionItem(itemProto.Value, chassis, module, container);
         }
+
+        foreach (var itemProto in module.Comp.ToggleItems)
+        {
+            if (itemProto is null)
+                continue;
+
+            AddToggleItem(itemProto.Value, chassis, module, container);
+        }
     }
 
     /// <summary>
@@ -107,7 +126,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     )
     {
         var item = CreateInnateItem(itemProto, module, container);
-        var ev = new ModuleInnateUseItem(item);
+        var ev = new ModuleInnateUseItemEvent(item);
         var action = CreateAction(item, ev, InnateUseItemAction);
         AssignAction(chassis, module, action);
     }
@@ -123,8 +142,24 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     )
     {
         var item = CreateInnateItem(itemProto, module, container);
-        var ev = new ModuleInnateInteractionItem(item);
+        var ev = new ModuleInnateInteractionItemEvent(item);
         var action = CreateAction(item, ev, InnateInteractionItemAction);
+        AssignAction(chassis, module, action);
+    }
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    private void AddToggleItem(
+        EntProtoId itemProto,
+        EntityUid chassis,
+        Entity<BorgModuleInnateComponent> module,
+        BaseContainer container
+    )
+    {
+        var item = CreateInnateItem(itemProto, module, container);
+        var ev = new ModuleInnateToggleItemEvent(item);
+        var action = CreateAction(item, ev, InnateToggleItemAction);
         AssignAction(chassis, module, action);
     }
 
@@ -185,20 +220,48 @@ public sealed class BorgModuleInnateSystem : EntitySystem
         module.Comp.Actions.Add(action);
     }
 
+    private void UseInHand(EntityUid performer, EntityUid item)
+    {
+        var ev = new UseInHandEvent(performer);
+        RaiseLocalEvent(item, ev);
+    }
+
     /// <summary>
     /// Обработчик события использования предмета как будто он в руке
     /// </summary>
-    private void OnInnateUseItem(Entity<BorgModuleInnateComponent> ent, ref ModuleInnateUseItem args)
+    private void OnInnateUseItem(Entity<BorgModuleInnateComponent> ent, ref ModuleInnateUseItemEvent args)
     {
-        var ev = new UseInHandEvent(args.Performer);
-        RaiseLocalEvent(args.Item, ev);
+        UseInHand(args.Performer, args.Item);
+        args.Handled = true;
+    }
+
+    /// <summary>
+    /// Обработчик события использования предмета как будто он в руке
+    /// </summary>
+    private void OnInnateToggleItem(Entity<BorgModuleInnateComponent> ent, ref ModuleInnateToggleItemEvent args)
+    {
+        UseInHand(args.Performer, args.Item);
+
+        // Пытаемся удалить из списка включенных предметов
+        // если успешно удалили - значит ставим дефолтный цвет иконки
+        // если нет - ставим светло-зелёный и добавляем в список
+        if (ent.Comp.ToggledOn.Remove(args.Item))
+        {
+            _actions.SetIconColor(args.Action.AsNullable(), Color.White);
+        }
+        else
+        {
+            _actions.SetIconColor(args.Action.AsNullable(), Color.PaleGreen);
+            ent.Comp.ToggledOn.Add(args.Item);
+        }
+
         args.Handled = true;
     }
 
     /// <summary>
     /// Обработчик события использования предмета на заданной цели
     /// </summary>
-    private void OnInnateInteractionItem(Entity<BorgModuleInnateComponent> ent, ref ModuleInnateInteractionItem args)
+    private void OnInnateInteractionItem(Entity<BorgModuleInnateComponent> ent, ref ModuleInnateInteractionItemEvent args)
     {
         _interactions.InteractUsing(
             args.Performer,

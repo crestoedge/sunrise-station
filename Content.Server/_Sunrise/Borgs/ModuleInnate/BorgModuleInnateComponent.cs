@@ -21,6 +21,12 @@ public sealed partial class BorgModuleInnateComponent : Component
     public List<EntProtoId?> InteractionItems = new();
 
     /// <summary>
+    /// Предметы, которые переключаются при активации в руке
+    /// </summary>
+    [DataField]
+    public List<EntProtoId?> ToggleItems = new();
+
+    /// <summary>
     /// Компоненты, которые будут добавлены боргу при установке модуля
     /// Будут удалены после его изъятия!
     /// </summary>
@@ -32,7 +38,6 @@ public sealed partial class BorgModuleInnateComponent : Component
     /// Данный список нужен сугубо для корректной очистки
     /// </summary>
     [ViewVariables]
-    [Access(typeof(BorgModuleInnateSystem))]
     public List<EntityUid> AddedInnateItems = new();
 
     /// <summary>
@@ -40,6 +45,12 @@ public sealed partial class BorgModuleInnateComponent : Component
     /// Данный список нужен сугубо для корректной очистки
     /// </summary>
     [ViewVariables]
-    [Access(typeof(BorgModuleInnateSystem))]
     public List<EntityUid> Actions = new();
+
+    /// <summary>
+    /// Список включенных предметов
+    /// Данный список нужен сугубо для корректной очистки
+    /// </summary>
+    [ViewVariables]
+    public List<EntityUid> ToggledOn = new();
 }
