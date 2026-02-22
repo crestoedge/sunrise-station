@@ -319,3 +319,30 @@
     - item: XenoborgLaserMinigun
   - type: BorgModuleIcon
     icon: { sprite: _Sunrise/Interface/Actions/actions_borg.rsi, state: xenoborg-laser3-module }
+
+- type: entity
+  parent: BaseBorgModule
+  id: BorgModuleNVD
+  name: NVD borg module
+  description: A cyborg module that provides togglable NVD functionality to a borg.
+  components:
+  - type: Sprite
+    layers:
+    - state: generic
+  - type: BorgModuleInnate
+    innateComponents:
+      - type: ToggleableNightVision
+        effect: EffectNightVisionBorg
+
+- type: entity
+  parent: BaseBorgModule
+  id: BorgModuleFloodLight
+  name: floodlight borg module
+  description: A cyborg module that provides a togglable floodlight to a borg.
+  components:
+  - type: Sprite
+    layers:
+    - state: generic
+  - type: BorgModuleInnate
+    useItems:
+      - Floodlight
