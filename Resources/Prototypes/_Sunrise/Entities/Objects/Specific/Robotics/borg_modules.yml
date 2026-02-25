@@ -384,7 +384,9 @@
           - TabletopBoard
           - Write
   - type: BorgModuleIcon
-    icon: { sprite: _Sunrise/Interface/Actions/actions_borg.rsi, state: paperwork-module }
+    icon:
+      sprite: _Sunrise/Interface/Actions/actions_borg.rsi
+      state: paperwork-module
 
 - type: entity
   id: BorgModuleBartender
@@ -430,7 +432,9 @@
     - item: BarSpoon
     - item: BorgDropper
   - type: BorgModuleIcon
-    icon: { sprite: Interface/Actions/actions_borg.rsi, state: service-module }
+    icon:
+      sprite: Interface/Actions/actions_borg.rsi
+      state: service-module
 
 - type: entity
   id: BorgModuleCooking
@@ -502,7 +506,9 @@
           components:
           - Edible
   - type: BorgModuleIcon
-    icon: { sprite: _Sunrise/Interface/Actions/actions_borg.rsi, state: cooking-module }
+    icon:
+      sprite: _Sunrise/Interface/Actions/actions_borg.rsi
+      state: cooking-module
 
 - type: entity
   id: BorgModuleExtensiveGardening
@@ -543,4 +549,6 @@
           components:
           - Seed
   - type: BorgModuleIcon
-    icon: { sprite: Interface/Actions/actions_borg.rsi, state: gardening-module }
+    icon:
+      sprite: Interface/Actions/actions_borg.rsi
+      state: gardening-module }
