@@ -57,7 +57,7 @@ public sealed class PettingSystem : SharedPettingSystem
 
         SubscribeLocalEvent<PetOnInteractComponent, PetInterruptAttackEvent>(OnAttackInterrupt);
         SubscribeLocalEvent<MobStateChangedEvent>(OnKill);
-        SubscribeLocalEvent<PettableOnInteractComponent, ComponentInit>(EnsureFactionComponent);
+        SubscribeLocalEvent<PettableOnInteractComponent, ComponentStartup>(EnsureFactionComponent);
     }
 
     #region Events
@@ -206,7 +206,7 @@ public sealed class PettingSystem : SharedPettingSystem
     /// <summary>
     /// Создает для питомцев компонент фракции с дефолтной фракцией, указанной в самом компоненте питомца.
     /// </summary>
-    private void EnsureFactionComponent(Entity<PettableOnInteractComponent> pet, ref ComponentInit args)
+    private void EnsureFactionComponent(Entity<PettableOnInteractComponent> pet, ref ComponentStartup args)
     {
         _npcFaction.ClearFactions(pet.Owner);
         _npcFaction.AddFaction(pet.Owner, pet.Comp.DefaultFaction);
@@ -254,51 +254,42 @@ public sealed class PettingSystem : SharedPettingSystem
         if (!master.HasValue)
             return;
 
+        // Обновляем фракцию питомца, если указ изменился
+        if (order != pet.Comp.CurrentOrder)
+        {
+            // Если питомец атаковал и перестанет после нового приказа - ставим дефолт фракцию
+            if (pet.Comp.CurrentOrder == PetOrderType.Attack && order != PetOrderType.Attack)
+                ToggleAttackingFaction(pet, false);
+            // Если питомец был пассивным и станет атаковать - ставим атакующую
+            else if (pet.Comp.CurrentOrder != PetOrderType.Attack && order == PetOrderType.Attack)
+                ToggleAttackingFaction(pet, true);
+        }
+
         // Задаем питомцу задачу следовать за хозяином
         switch (order)
         {
             case PetOrderType.Follow:
-                // Устанавливаем фракцию по умолчанию
-                if (pet.Comp.CurrentOrder == PetOrderType.Attack)
-                    SwitchAttackingFaction(pet, false);
-
-                _npc.SetBlackboard(pet,
-                    NPCBlackboard.FollowTarget,
-                    new EntityCoordinates(master.Value, Vector2.Zero));
+                _npc.SetBlackboard(pet, NPCBlackboard.FollowTarget, new EntityCoordinates(master.Value, Vector2.Zero));
                 break;
 
             case PetOrderType.Stay:
-                if (pet.Comp.CurrentOrder == PetOrderType.Attack)
-                    SwitchAttackingFaction(pet, false);
-
-                _npc.SetBlackboard(pet,
-                    NPCBlackboard.FollowTarget,
-                    new EntityCoordinates(pet, Vector2.Zero));
+                _npc.SetBlackboard(pet, NPCBlackboard.FollowTarget, new EntityCoordinates(pet, Vector2.Zero));
                 break;
 
             case PetOrderType.Attack:
                 if (!target.HasValue)
                     return; // Не break - предотвращаем некорректный вызов без цели и обходим обновление состояния
 
-                // Устанавливаем фракцию для атаки
-                if (pet.Comp.CurrentOrder != PetOrderType.Attack)
-                    SwitchAttackingFaction(pet, true);
-
                 AddInterruptAction(master.Value);
 
-                _npc.SetBlackboard(pet,
-                    NPCBlackboard.CurrentOrderedTarget,
-                    target);
+                _npc.SetBlackboard(pet, NPCBlackboard.CurrentOrderedTarget, target);
                 break;
         }
 
         pet.Comp.CurrentOrder = order;
 
         // Удаляем действие прерывания атаки у владельца, если ни один из его питомцев не атакует на данный момент.
-        if (
-            TryComp<PetOnInteractComponent>(master, out var masterComp)
-            && masterComp.Pets.All(p => !IsAttacking(p))
-        )
+        if (TryComp<PetOnInteractComponent>(master, out var masterComp) && masterComp.Pets.All(p => !IsAttacking(p)))
             RemoveInterruptAction(master.Value);
 
         UpdatePetNpc(pet, order);
@@ -406,7 +397,7 @@ public sealed class PettingSystem : SharedPettingSystem
     /// </summary>
     /// <param name="pet">Сущность питомца, потенциально с компонентом Pettable</param>
     /// <param name="attacking">true - устанавливает атакующую фракцию, false - дефолтную</param>
-    private void SwitchAttackingFaction(Entity<PettableOnInteractComponent?> pet, bool attacking)
+    private void ToggleAttackingFaction(Entity<PettableOnInteractComponent?> pet, bool attacking)
     {
         if (!Resolve(pet, ref pet.Comp))
             return;
