@@ -70,7 +70,7 @@
   name: night vision
   components:
   - type: PointLight
-    color: "#12ac9f"
+    color: "#127bac"
     energy: 0.5
     radius: 20
     softness: 20

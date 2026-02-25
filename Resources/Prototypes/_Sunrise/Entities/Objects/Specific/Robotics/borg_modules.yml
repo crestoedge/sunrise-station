@@ -333,6 +333,25 @@
     innateComponents:
       - type: ToggleableNightVision
         effect: EffectNightVisionBorg
+  - type: Tag
+    tags:
+      - BorgModuleGeneric
+
+- type: entity
+  parent: BaseBorgModule
+  id: BorgModuleThermals
+  name: thermal vision borg module
+  description: A cyborg module that provides togglable thermal vision functionality to a borg.
+  components:
+  - type: Sprite
+    layers:
+    - state: security
+  - type: BorgModuleInnate
+    innateComponents:
+      - type: ToggleableThermalVision
+  - type: Tag
+    tags:
+      - BorgModuleSecurity
 
 - type: entity
   parent: BaseBorgModule
@@ -346,3 +365,6 @@
   - type: BorgModuleInnate
     toggleItems:
       - BorgInnateFloodlight
+  - type: Tag
+    tags:
+      - BorgModuleGeneric
