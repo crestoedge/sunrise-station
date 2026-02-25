@@ -57,7 +57,7 @@ public sealed class PettingSystem : SharedPettingSystem
 
         SubscribeLocalEvent<PetOnInteractComponent, PetInterruptAttackEvent>(OnAttackInterrupt);
         SubscribeLocalEvent<MobStateChangedEvent>(OnKill);
-        SubscribeLocalEvent<PettableOnInteractComponent, ComponentStartup>(EnsureFactionComponent);
+        SubscribeLocalEvent<PettableOnInteractComponent, MapInitEvent>(EnsureFactionComponent);
     }
 
     #region Events
@@ -206,7 +206,7 @@ public sealed class PettingSystem : SharedPettingSystem
     /// <summary>
     /// Создает для питомцев компонент фракции с дефолтной фракцией, указанной в самом компоненте питомца.
     /// </summary>
-    private void EnsureFactionComponent(Entity<PettableOnInteractComponent> pet, ref ComponentStartup args)
+    private void EnsureFactionComponent(Entity<PettableOnInteractComponent> pet, ref MapInitEvent args)
     {
         _npcFaction.ClearFactions(pet.Owner);
         _npcFaction.AddFaction(pet.Owner, pet.Comp.DefaultFaction);
