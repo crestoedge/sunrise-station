@@ -117,8 +117,9 @@ public sealed class BorgModuleInnateSystem : EntitySystem
                     // Добавляем в список балансировки
                     batteriesToBalance.Add(itemBattery);
                     // Ведём учет общего заряда / максимального заряда для балансировки
-                    totalChargeToBalance += _battery.GetCharge(itemBattery.AsNullable());
-                    totalMaxChargeToBalance += itemBattery.Comp.MaxCharge;
+                    // Умножаем на PowerUseCoefficient для уменьшения потребления
+                    totalChargeToBalance += _battery.GetCharge(itemBattery.AsNullable()) * moduleComp.PowerUseCoefficient;
+                    totalMaxChargeToBalance += itemBattery.Comp.MaxCharge * moduleComp.PowerUseCoefficient;
                 }
             }
 

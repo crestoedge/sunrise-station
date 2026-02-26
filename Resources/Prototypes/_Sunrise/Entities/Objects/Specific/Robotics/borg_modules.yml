@@ -330,25 +330,26 @@
     layers:
     - state: generic
   - type: BorgModuleInnate
-    innateComponents:
-      - type: ToggleableNightVision
-        effect: EffectNightVisionBorg
+    powerUseCoefficient: 0.1
+    toggleItems:
+      - NightVisionDeviceBorg
   - type: Tag
     tags:
       - BorgModuleGeneric
 
 - type: entity
   parent: BaseBorgModule
-  id: BorgModuleThermals
-  name: thermal vision borg module
+  id: BorgModuleTVD
+  name: thermal vision device borg module
   description: A cyborg module that provides togglable thermal vision functionality to a borg.
   components:
   - type: Sprite
     layers:
     - state: security
   - type: BorgModuleInnate
-    innateComponents:
-      - type: ToggleableThermalVision
+    powerUseCoefficient: 0.1
+    toggleItems:
+      - ThermalVisionDeviceBorg
   - type: Tag
     tags:
       - BorgModuleSecurity
@@ -363,6 +364,7 @@
     layers:
     - state: generic
   - type: BorgModuleInnate
+    powerUseCoefficient: 0.1
     toggleItems:
       - BorgInnateFloodlight
   - type: Tag

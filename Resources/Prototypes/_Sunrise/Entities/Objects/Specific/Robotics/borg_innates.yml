@@ -1,9 +1,11 @@
+# Нано батарея для встроенных предметов, чтобы они не имели большой собственной ёмкости и потребляли энергию борга
 - type: entity
   name: nano-capacity power cell
   description: A rechargeable power cell. Well, this is actually a huge super-capacitor.
   id: PowerCellNano
   suffix: Full
   parent: BasePowerCell
+  categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
     layers:
@@ -24,6 +26,7 @@
   id: BorgInnateFloodlight
   parent: BaseLamp
   description: A pole with powerful mounted lights on it.
+  categories: [ HideSpawnMenu ]
   components:
   - type: Item
     size: Normal
@@ -69,3 +72,61 @@
     energy: 5
     netsync: false
 
+- type: entity
+  parent: ClothingEyesNVD
+  id: NightVisionDeviceBorg
+  name: borg NVD
+  description: Nightvision googles in the shell.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: ToggleClothing
+    action: NVDToggleAction
+    mustEquip: false
+    disableOnUnequip: false
+  - type: ItemToggle
+    predictable: false # issues between ToggleCellDraw and ItemToggleActiveSound
+    onUse: true
+    canActivateInhand: true
+    soundActivate:
+      path: /Audio/_Sunrise/Items/Goggles/activate.ogg
+    soundDeactivate:
+      path: /Audio/_Sunrise/Items/Goggles/deactivate.ogg
+    soundFailToActivate:
+      path: /Audio/Machines/button.ogg
+  - type: ComponentToggler
+    parent: true
+    components:
+      - type: NightVision
+        effect: EffectNightVisionBorg
+  - type: ItemSlots
+    slots:
+      cell_slot:
+        name: power-cell-slot-component-slot-name-default
+        startingItem: PowerCellNano
+
+- type: entity
+  parent: ClothingEyesGlassesThermal
+  id: ThermalVisionDeviceBorg
+  name: borg TVD
+  description: Thermal googles in the shell.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: ToggleClothing
+    action: ActionToggleThermalVision
+    mustEquip: false
+    disableOnUnequip: false
+  - type: ItemToggle
+    predictable: false # issues between ToggleCellDraw and ItemToggleActiveSound
+    onUse: true
+    canActivateInhand: true
+    soundActivate:
+      path: /Audio/_Sunrise/Items/Goggles/activate.ogg
+    soundDeactivate:
+      path: /Audio/_Sunrise/Items/Goggles/deactivate.ogg
+    soundFailToActivate:
+      path: /Audio/Machines/button.ogg
+  - type: ItemSlots
+    slots:
+      cell_slot:
+        name: power-cell-slot-component-slot-name-default
+        startingItem: PowerCellNano

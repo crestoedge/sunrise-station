@@ -9,6 +9,12 @@ namespace Content.Server._Sunrise.Borgs.ModuleInnate;
 public sealed partial class BorgModuleInnateComponent : Component
 {
     /// <summary>
+    /// Множитель потребления энергии предметами модуля
+    /// </summary>
+    [DataField]
+    public float PowerUseCoefficient = 0.5f;
+
+    /// <summary>
     /// Предметы, которые активируются прямо в руке
     /// </summary>
     [DataField]
