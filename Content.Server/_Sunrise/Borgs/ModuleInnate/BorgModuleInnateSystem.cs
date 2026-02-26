@@ -358,16 +358,19 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     /// </summary>
     private void OnInnateToggleItem(Entity<BorgModuleInnateComponent> ent, ref ModuleInnateToggleItemEvent args)
     {
-        _interactions.UseInHandInteraction(args.Performer, args.Item, false, true);
-
-        // Пытаемся удалить из списка включенных предметов
-        // если успешно удалили - значит ставим дефолтный цвет иконки
-        // если нет - ставим светло-зелёный и добавляем в список
-        if (!ent.Comp.ToggledOn.Remove(args.Item))
+        // Пытаемся взаимодействовать
+        if (!_interactions.UseInHandInteraction(args.Performer, args.Item, false, true))
         {
-            // _actions.SetIconColor(args.Action.AsNullable(), Color.PaleGreen);
-            ent.Comp.ToggledOn.Add(args.Item);
+            args.Handled = true;
+            return;
         }
+
+        // Обновляем состояние в соответствии с текущим
+        var wasToggled = ent.Comp.ToggledOn.Contains(args.Item);
+        if (wasToggled)
+            ent.Comp.ToggledOn.Add(args.Item);
+        else
+            ent.Comp.ToggledOn.Remove(args.Item);
 
         args.Handled = true;
     }

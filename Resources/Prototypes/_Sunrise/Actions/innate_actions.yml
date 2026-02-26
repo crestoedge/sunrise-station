@@ -32,6 +32,7 @@
     itemIconStyle: BigItem
     checkCanInteract: false
     temporary: true
+    ignoreContainer: true
   - type: InstantAction
     event: !type:ModuleInnateUseItemEvent
 
