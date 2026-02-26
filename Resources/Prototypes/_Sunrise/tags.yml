@@ -140,6 +140,9 @@
 - type: Tag
   id: PowerCellHigh
 
+- type: Tag
+  id: PowerCellNano
+
 # Ammo / payloads
 - type: Tag
   id: ArtilleryShell

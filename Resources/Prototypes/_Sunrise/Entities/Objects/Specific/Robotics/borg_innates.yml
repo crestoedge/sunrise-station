@@ -1,4 +1,25 @@
 - type: entity
+  name: nano-capacity power cell
+  description: A rechargeable power cell. Well, this is actually a huge super-capacitor.
+  id: PowerCellNano
+  suffix: Full
+  parent: BasePowerCell
+  components:
+  - type: Sprite
+    layers:
+    - map: [ "enum.PowerCellVisualLayers.Base" ]
+      state: small
+    - map: [ "enum.PowerCellVisualLayers.Unshaded" ]
+      state: o2
+      shader: unshaded
+  - type: Battery
+    maxCharge: 60
+    startingCharge: 60
+  - type: Tag
+    tags:
+      - PowerCellNano
+
+- type: entity
   name: floodlight
   id: BorgInnateFloodlight
   parent: BaseLamp
@@ -12,7 +33,7 @@
     slots:
       cell_slot:
         name: power-cell-slot-component-slot-name-default
-        startingItem: PowerCellMicroreactor
+        startingItem: PowerCellNano
   - type: Sprite
     sprite: Objects/Misc/Lights/lights.rsi
     layers:

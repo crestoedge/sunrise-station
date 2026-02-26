@@ -29,7 +29,7 @@
   components:
   - type: Action
     useDelay: 1
-    itemIconStyle: BigAction
+    itemIconStyle: BigItem
     checkCanInteract: false
     temporary: true
   - type: InstantAction
@@ -41,7 +41,7 @@
   components:
   - type: Action
     useDelay: 1
-    itemIconStyle: BigAction
+    itemIconStyle: BigItem
     checkCanInteract: false
     temporary: true
     ignoreContainer: true
@@ -54,7 +54,7 @@
   components:
   - type: Action
     useDelay: 1
-    itemIconStyle: BigAction
+    itemIconStyle: BigItem
     checkCanInteract: false
     temporary: true
   - type: TargetAction

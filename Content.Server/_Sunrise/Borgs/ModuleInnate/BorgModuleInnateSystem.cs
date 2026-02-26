@@ -2,6 +2,10 @@ using Content.Shared._Sunrise.Borgs.ModuleInnate;
 using Content.Shared.Actions;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
+using Content.Shared.Power.Components;
+using Content.Shared.Power.EntitySystems;
+using Content.Shared.PowerCell;
+using Content.Shared.PowerCell.Components;
 using Content.Shared.Silicons.Borgs.Components;
 using Content.Shared.UserInterface;
 using Robust.Shared.Containers;
@@ -20,6 +24,8 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     [Dependency] private readonly SharedContainerSystem _containers = default!;
     [Dependency] private readonly MetaDataSystem _metadata = default!;
     [Dependency] private readonly SharedInteractionSystem _interactions = default!;
+    [Dependency] private readonly PowerCellSystem _powerCell = default!;
+    [Dependency] private readonly SharedBatterySystem _battery = default!;
 
     // Название контейнера-хранилища встроенных предметов
     private const string InnateItemsContainerId = "module_innate_items";
@@ -28,6 +34,13 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     private static readonly EntProtoId InnateUseItemAction = "ModuleInnateUseItemAction";
     private static readonly EntProtoId InnateToggleItemAction = "ModuleInnateToggleItemAction";
     private static readonly EntProtoId InnateInteractionItemAction = "ModuleInnateInteractionItemAction";
+
+    /// <summary>
+    /// Период обновления баланса зарядов между боргом и встроенными предметами.
+    /// </summary>
+    private const float ChargeBalanceInterval = 1f;
+
+    private float _chargeBalanceAccumulator;
 
     public override void Initialize()
     {
@@ -39,6 +52,108 @@ public sealed class BorgModuleInnateSystem : EntitySystem
         SubscribeLocalEvent<BorgModuleInnateComponent, ModuleInnateUseItemEvent>(OnInnateUseItem);
         SubscribeLocalEvent<BorgModuleInnateComponent, ModuleInnateToggleItemEvent>(OnInnateToggleItem);
         SubscribeLocalEvent<BorgModuleInnateComponent, ModuleInnateInteractionItemEvent>(OnInnateInteractionItem);
+    }
+
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+
+        _chargeBalanceAccumulator += frameTime;
+        if (_chargeBalanceAccumulator < ChargeBalanceInterval)
+            return;
+
+        _chargeBalanceAccumulator -= ChargeBalanceInterval;
+
+        BalanceInnateItemCharges();
+    }
+
+    /// <summary>
+    /// Раз в секунду балансирует заряд между батарейкой борга и предметами, которые тоже имеют батарею.
+    /// </summary>
+    private void BalanceInnateItemCharges()
+    {
+        var borgQuery = EntityQueryEnumerator<BorgChassisComponent, PowerCellSlotComponent>();
+
+        while (borgQuery.MoveNext(out var borgUid, out var chassis, out var borgCellSlot))
+        {
+            // Пытаемся получить основную батарею борга.
+            if (!_powerCell.TryGetBatteryFromSlot(borgUid, out var borgBattery))
+                continue;
+
+            // Проверяем заряд борга.
+            var borgCharge = _battery.GetCharge((borgBattery.Value.Owner, borgBattery.Value.Comp));
+            if (borgCharge <= 5f || borgBattery.Value.Comp.MaxCharge <= 5f)
+                continue;
+
+            // Батарейки, которые будут отбалансированы, включая батарею борга
+            var batteriesToBalance = new List<Entity<BatteryComponent>> { borgBattery.Value };
+            // Нужные значения для балансировки
+            var totalChargeToBalance = borgCharge;
+            var totalMaxChargeToBalance = borgBattery.Value.Comp.MaxCharge;
+
+            // Подготавливаем переменные
+            var borgChargeLevel = borgCharge / borgBattery.Value.Comp.MaxCharge;
+
+            // TODO: make charging multiplier work by multiplying current item charge and max charge for the calculation and then divide by the multiplier
+            // Для всех модулей (берём айтемы из модулей, а не контейнера, чтобы потом можно было задавать рейты заряда в будущем)
+            foreach (var moduleUid in chassis.ModuleContainer.ContainedEntities)
+            {
+                // С компонентом иннейтов
+                if (!TryComp<BorgModuleInnateComponent>(moduleUid, out var moduleComp))
+                    continue;
+                // Для каждого предмета модуля
+                foreach (var item in moduleComp.AddedInnateItems)
+                {
+                    // Если у него есть батарея
+                    if (!TryGetItemBattery(item, out var itemBattery))
+                        continue;
+
+                    // Если уровень заряда меньше уровня заряда боргича (чтобы не заряжали борга)
+                    // TODO: возможно лучше просто давать более маленькие батарейки?
+                    // var charge = _battery.GetCharge(itemBattery.AsNullable());
+                    // if (borgChargeLevel >= charge / itemBattery.Comp.MaxCharge)
+                    //     continue;
+
+                    // Добавляем в список балансировки
+                    batteriesToBalance.Add(itemBattery);
+                    // Ведём учет общего заряда / максимального заряда для балансировки
+                    totalChargeToBalance += _battery.GetCharge(itemBattery.AsNullable());
+                    totalMaxChargeToBalance += itemBattery.Comp.MaxCharge;
+                }
+            }
+
+            // Считаем уровень балансировки
+            var setLevel = totalChargeToBalance / totalMaxChargeToBalance;
+            // Раздаем заряд каждой батарее обратно в балансированном виде
+            foreach (var battery in batteriesToBalance)
+                _battery.SetCharge((battery.Owner, battery.Comp), setLevel * battery.Comp.MaxCharge);
+        }
+    }
+
+    /// <summary>
+    /// Пытается получить батарею встроенного предмета (из PowerCellSlot или прямо из BatteryComponent).
+    /// </summary>
+    private bool TryGetItemBattery(EntityUid item, out Entity<BatteryComponent> battery)
+    {
+        // Сперва пробуем через слот аккумулятора, если он есть.
+        if (TryComp<PowerCellSlotComponent>(item, out var slot))
+        {
+            if (_powerCell.TryGetBatteryFromSlotOrEntity((item, slot), out var slotBattery) && slotBattery != null)
+            {
+                battery = slotBattery.Value;
+                return true;
+            }
+        }
+
+        // Если слота нет, проверяем является ли сам предмет батарейкой.
+        if (TryComp<BatteryComponent>(item, out var directBattery))
+        {
+            battery = (item, directBattery);
+            return true;
+        }
+
+        battery = default;
+        return false;
     }
 
     /// <summary>
@@ -68,7 +183,6 @@ public sealed class BorgModuleInnateSystem : EntitySystem
         // Выключаем включенные предметы
         foreach (var enabledItem in module.Comp.ToggledOn)
             _interactions.UseInHandInteraction(args.ChassisEnt, enabledItem, false, true);
-            // UseInHand(args.ChassisEnt, enabled);
 
         // Чистим сущностей и компоненты
         foreach (var action in module.Comp.Actions)
@@ -128,7 +242,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     {
         var item = CreateInnateItem(itemProto, module, container);
         var ev = new ModuleInnateUseItemEvent(item);
-        var action = CreateAction(item, ev, InnateUseItemAction);
+        var action = CreateAction(item, module.Owner, ev, InnateUseItemAction);
         AssignAction(chassis, module, action);
     }
 
@@ -144,7 +258,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     {
         var item = CreateInnateItem(itemProto, module, container);
         var ev = new ModuleInnateInteractionItemEvent(item);
-        var action = CreateAction(item, ev, InnateInteractionItemAction);
+        var action = CreateAction(item, module.Owner, ev, InnateInteractionItemAction);
         AssignAction(chassis, module, action);
     }
 
@@ -160,7 +274,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     {
         var item = CreateInnateItem(itemProto, module, container);
         var ev = new ModuleInnateToggleItemEvent(item);
-        var action = CreateAction(item, ev, InnateToggleItemAction);
+        var action = CreateAction(item, module.Owner, ev, InnateToggleItemAction);
         AssignAction(chassis, module, action);
     }
 
@@ -196,13 +310,15 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     /// Согласно прототипу и событию создает экшен для активации данной сущности-предмета
     /// </summary>
     /// <returns>Сущность экшена</returns>
-    private EntityUid CreateAction(EntityUid item, BaseActionEvent assignedEvent, EntProtoId actionProto)
+    private EntityUid CreateAction(EntityUid item, EntityUid module, BaseActionEvent assignedEvent, EntProtoId actionProto)
     {
         var actionEnt = Spawn(actionProto);
-        // Подгружаем спрайт для экшена из прото предмета
-        _actions.SetIcon(actionEnt, new SpriteSpecifier.EntityPrototype(MetaData(item).EntityPrototype!.ID));
+        // Подгружаем спрайт для экшена в виде модуля
+        _actions.SetIcon(actionEnt, new SpriteSpecifier.EntityPrototype(MetaData(module).EntityPrototype!.ID));
         // Заготовка события для экшена
         _actions.SetEvent(actionEnt, assignedEvent);
+        // Устанавливаем сущность предмета в качестве иконки
+        _actions.SetEntityIcon(actionEnt, item);
 
         // Даем экшену название и описание предмета
         _metadata.SetEntityName(actionEnt, MetaData(item).EntityName);
@@ -247,13 +363,9 @@ public sealed class BorgModuleInnateSystem : EntitySystem
         // Пытаемся удалить из списка включенных предметов
         // если успешно удалили - значит ставим дефолтный цвет иконки
         // если нет - ставим светло-зелёный и добавляем в список
-        if (ent.Comp.ToggledOn.Remove(args.Item))
+        if (!ent.Comp.ToggledOn.Remove(args.Item))
         {
-            _actions.SetIconColor(args.Action.AsNullable(), Color.White);
-        }
-        else
-        {
-            _actions.SetIconColor(args.Action.AsNullable(), Color.PaleGreen);
+            // _actions.SetIconColor(args.Action.AsNullable(), Color.PaleGreen);
             ent.Comp.ToggledOn.Add(args.Item);
         }
 
