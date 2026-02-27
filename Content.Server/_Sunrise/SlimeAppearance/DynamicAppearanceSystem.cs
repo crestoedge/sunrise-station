@@ -52,10 +52,10 @@ public sealed class DynamicAppearanceSystem : EntitySystem
                 Icon = new SpriteSpecifier.Rsi(new("/Textures/Mobs/Species/Slime/parts.rsi"), "head_m"),
                 Act = () =>
                 {
-                    _uiSystem.OpenUi(uid, DynamicAppearanceUIKey.Key, actor.PlayerSession);
+                    _uiSystem.OpenUi(uid, DynamicAppearanceUiKey.Key, actor.PlayerSession);
                     _uiSystem.SetUiState(
                         uid,
-                        DynamicAppearanceUIKey.Key,
+                        DynamicAppearanceUiKey.Key,
                         new DynamicAppearanceUIState(
                             humanoidAppearance.MarkingSet,
                             humanoidAppearance.Species,
@@ -93,7 +93,7 @@ public sealed class DynamicAppearanceSystem : EntitySystem
         {
             _uiSystem.SetUiState(
                 uid,
-                DynamicAppearanceUIKey.Key,
+                DynamicAppearanceUiKey.Key,
                 new DynamicAppearanceUIState(
                     humanoidAppearance.MarkingSet,
                     humanoidAppearance.Species,
@@ -134,7 +134,7 @@ public sealed class DynamicAppearanceSystem : EntitySystem
         {
             _uiSystem.SetUiState(
                 uid,
-                DynamicAppearanceUIKey.Key,
+                DynamicAppearanceUiKey.Key,
                 new DynamicAppearanceUIState(
                     humanoidAppearance.MarkingSet,
                     humanoidAppearance.Species,

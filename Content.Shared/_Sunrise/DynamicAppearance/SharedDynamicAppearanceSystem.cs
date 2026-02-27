@@ -5,7 +5,7 @@ using Robust.Shared.Serialization;
 namespace Content.Shared._Sunrise.DynamicAppearance;
 
 [Serializable, NetSerializable]
-public enum DynamicAppearanceUIKey
+public enum DynamicAppearanceUiKey
 {
     Key,
 }

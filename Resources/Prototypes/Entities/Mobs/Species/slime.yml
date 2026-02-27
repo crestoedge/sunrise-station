@@ -48,8 +48,8 @@
         type: SurgeryBui
       enum.VampireMutationUiKey.Key:
         type: VampireMutationBoundUserInterface
-      enum.SlimeAppearanceModifierKey.Key:
-        type: SlimeAppearanceBoundUserInterface
+      enum.DynamicAppearanceUiKey.Key:
+        type: DynamicAppearanceBoundUserInterface
       # Sunrise-end
   - type: UseDelay
     delay: 0.5
