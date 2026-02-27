@@ -5,13 +5,5 @@ namespace Content.Shared._Sunrise.DynamicAppearance;
 /// <summary>
 /// Component that allows slime people to edit their appearance in-game.
 /// </summary>
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
-public sealed partial class DynamicAppearanceComponent : Component
-{
-    // TODO: говно, убрать (можно просто ремувать компач)
-    /// <summary>
-    /// Whether the slime appearance editor is currently enabled for this entity.
-    /// </summary>
-    [DataField, AutoNetworkedField]
-    public bool Enabled = true;
-}
+[RegisterComponent]
+public sealed partial class DynamicAppearanceComponent : Component { }

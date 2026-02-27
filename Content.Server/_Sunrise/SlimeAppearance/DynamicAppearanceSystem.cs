@@ -37,9 +37,6 @@ public sealed class DynamicAppearanceSystem : EntitySystem
         if (args.User != uid)
             return;
 
-        if (!component.Enabled)
-            return;
-
         // Check if the entity is a slime person
         if (!TryComp<HumanoidAppearanceComponent>(uid, out var humanoidAppearance))
             return;
