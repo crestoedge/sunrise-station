@@ -6,6 +6,7 @@
   components:
   # SUNRISE EDIT
   - type: Interactions
+  - type: DynamicAppearanceComponent
   # SUNRISE EDIT
   - type: Hunger
   - type: Thirst

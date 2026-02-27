@@ -2,21 +2,21 @@ using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
 using Robust.Shared.Serialization;
 
-namespace Content.Shared._Sunrise.SlimeAppearance;
+namespace Content.Shared._Sunrise.DynamicAppearance;
 
 [Serializable, NetSerializable]
-public enum SlimeAppearanceModifierKey
+public enum DynamicAppearanceUIKey
 {
-    Key
+    Key,
 }
 
 [Serializable, NetSerializable]
-public sealed class SlimeAppearanceModifierMarkingSetMessage : BoundUserInterfaceMessage
+public sealed class DynamicAppearanceUIMarkingSetMessage : BoundUserInterfaceMessage
 {
     public MarkingSet MarkingSet { get; }
     public bool ResendState { get; }
 
-    public SlimeAppearanceModifierMarkingSetMessage(MarkingSet set, bool resendState)
+    public DynamicAppearanceUIMarkingSetMessage(MarkingSet set, bool resendState)
     {
         MarkingSet = set;
         ResendState = resendState;
@@ -24,9 +24,9 @@ public sealed class SlimeAppearanceModifierMarkingSetMessage : BoundUserInterfac
 }
 
 [Serializable, NetSerializable]
-public sealed class SlimeAppearanceModifierBaseLayersSetMessage : BoundUserInterfaceMessage
+public sealed class DynamicAppearanceUIBaseLayersSetMessage : BoundUserInterfaceMessage
 {
-    public SlimeAppearanceModifierBaseLayersSetMessage(HumanoidVisualLayers layer, CustomBaseLayerInfo? info, bool resendState)
+    public DynamicAppearanceUIBaseLayersSetMessage(HumanoidVisualLayers layer, CustomBaseLayerInfo? info, bool resendState)
     {
         Layer = layer;
         Info = info;
@@ -39,9 +39,9 @@ public sealed class SlimeAppearanceModifierBaseLayersSetMessage : BoundUserInter
 }
 
 [Serializable, NetSerializable]
-public sealed class SlimeAppearanceModifierState : BoundUserInterfaceState
+public sealed class DynamicAppearanceUIState : BoundUserInterfaceState
 {
-    public SlimeAppearanceModifierState(
+    public DynamicAppearanceUIState(
         MarkingSet markingSet,
         string species,
         string bodyType,

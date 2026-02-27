@@ -1,17 +1,17 @@
 using Content.Client.Humanoid;
-using Content.Shared._Sunrise.SlimeAppearance;
+using Content.Shared._Sunrise.DynamicAppearance;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
 using Robust.Client.UserInterface;
 
-namespace Content.Client._Sunrise.SlimeAppearance;
+namespace Content.Client._Sunrise.DynamicAppearance;
 
-public sealed class SlimeAppearanceBoundUserInterface : BoundUserInterface
+public sealed class DynamicAppearanceBoundUserInterface : BoundUserInterface
 {
     [ViewVariables]
     private HumanoidMarkingModifierWindow? _window;
 
-    public SlimeAppearanceBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
+    public DynamicAppearanceBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
     {
     }
 
@@ -32,7 +32,7 @@ public sealed class SlimeAppearanceBoundUserInterface : BoundUserInterface
     {
         base.UpdateState(state);
 
-        if (_window == null || state is not SlimeAppearanceModifierState cast)
+        if (_window == null || state is not DynamicAppearanceUIState cast)
         {
             return;
         }
@@ -42,16 +42,16 @@ public sealed class SlimeAppearanceBoundUserInterface : BoundUserInterface
 
     private void SendMarkingSet(MarkingSet set)
     {
-        SendMessage(new SlimeAppearanceModifierMarkingSetMessage(set, true));
+        SendMessage(new DynamicAppearanceUIMarkingSetMessage(set, true));
     }
 
     private void SendMarkingSetNoResend(MarkingSet set)
     {
-        SendMessage(new SlimeAppearanceModifierMarkingSetMessage(set, false));
+        SendMessage(new DynamicAppearanceUIMarkingSetMessage(set, false));
     }
 
     private void SendBaseLayer(HumanoidVisualLayers layer, CustomBaseLayerInfo? info)
     {
-        SendMessage(new SlimeAppearanceModifierBaseLayersSetMessage(layer, info, true));
+        SendMessage(new DynamicAppearanceUIBaseLayersSetMessage(layer, info, true));
     }
 }

@@ -1,13 +1,14 @@
 using Robust.Shared.GameStates;
 
-namespace Content.Shared._Sunrise.SlimeAppearance;
+namespace Content.Shared._Sunrise.DynamicAppearance;
 
 /// <summary>
 /// Component that allows slime people to edit their appearance in-game.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
-public sealed partial class SlimeAppearanceComponent : Component
+public sealed partial class DynamicAppearanceComponent : Component
 {
+    // TODO: говно, убрать (можно просто ремувать компач)
     /// <summary>
     /// Whether the slime appearance editor is currently enabled for this entity.
     /// </summary>
