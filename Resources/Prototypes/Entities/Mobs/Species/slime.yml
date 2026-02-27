@@ -6,7 +6,7 @@
   components:
   # SUNRISE EDIT
   - type: Interactions
-  - type: DynamicAppearanceComponent
+  - type: DynamicAppearance
   # SUNRISE EDIT
   - type: Hunger
   - type: Thirst
@@ -55,7 +55,6 @@
     delay: 0.5
   - type: HumanoidAppearance
     species: SlimePerson
-  - type: SlimeAppearance
   - type: Speech
     speechVerb: Slime
     speechSounds: Slime
