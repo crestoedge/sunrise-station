@@ -26,29 +26,27 @@ public sealed class DynamicAppearanceSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<DynamicAppearanceComponent, GetVerbsEvent<Verb>>(OnVerbsRequest);
+        SubscribeLocalEvent<DynamicAppearanceComponent, GetVerbsEvent<AlternativeVerb>>(OnVerbsRequest);
         SubscribeLocalEvent<DynamicAppearanceComponent, DynamicAppearanceUIMarkingSetMessage>(OnMarkingsSet);
         SubscribeLocalEvent<DynamicAppearanceComponent, DynamicAppearanceUIBaseLayersSetMessage>(OnBaseLayersSet);
     }
 
-    private void OnVerbsRequest(EntityUid uid, DynamicAppearanceComponent component, GetVerbsEvent<Verb> args)
+    private void OnVerbsRequest(EntityUid uid, DynamicAppearanceComponent component, GetVerbsEvent<AlternativeVerb> args)
     {
-        // Only allow self-modification for slime people
+        // Только владелец может менять внешку
         if (args.User != uid)
             return;
 
-        // Check if the entity is a slime person
+        // Получаем нужные компоненты
         if (!TryComp<HumanoidAppearanceComponent>(uid, out var humanoidAppearance))
             return;
-
         if (!TryComp<ActorComponent>(args.User, out var actor))
             return;
 
         args.Verbs.Add(
-            new Verb
+            new AlternativeVerb
             {
                 Text = Loc.GetString("slime-appearance-verb-text"),
-                Category = VerbCategory.Tricks,
                 Icon = new SpriteSpecifier.Rsi(new("/Textures/Mobs/Species/Slime/parts.rsi"), "head_m"),
                 Act = () =>
                 {
@@ -66,6 +64,7 @@ public sealed class DynamicAppearanceSystem : EntitySystem
                         )
                     );
                 },
+                Priority = -2,
             }
         );
     }
@@ -77,10 +76,6 @@ public sealed class DynamicAppearanceSystem : EntitySystem
     )
     {
         if (!TryComp<HumanoidAppearanceComponent>(uid, out var humanoidAppearance))
-            return;
-
-        // Ensure it's a slime person
-        if (humanoidAppearance.Species != "SlimePerson")
             return;
 
         // Filter markings to only allow those appropriate for slime people
@@ -113,10 +108,6 @@ public sealed class DynamicAppearanceSystem : EntitySystem
     )
     {
         if (!TryComp<HumanoidAppearanceComponent>(uid, out var humanoidAppearance))
-            return;
-
-        // Ensure it's a slime person
-        if (humanoidAppearance.Species != "SlimePerson")
             return;
 
         if (message.Info == null)
