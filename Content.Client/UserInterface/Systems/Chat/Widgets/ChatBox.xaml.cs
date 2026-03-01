@@ -54,6 +54,7 @@ public partial class ChatBox : UIWidget
 
     [Dependency] private readonly IEntityManager _entManager = default!;
     [Dependency] private readonly ILogManager _log = default!;
+    [Dependency] private readonly CMChatSystem _cmChat = default!; // Sunrise-edit
 
     private readonly ISawmill _sawmill;
     private readonly ChatUIController _controller;
@@ -219,7 +220,7 @@ public partial class ChatBox : UIWidget
         formatted.AddMarkupOrThrow(message);
         formatted.Pop();
         // RMC14-start
-        if (_entManager.System<CMChatSystem>().TryRepetition(this, Contents, formatted, sender, unwrapped, channel, repeatCheckSender))
+        if (_cmChat.TryRepetition(this, Contents, formatted, sender, unwrapped, channel, repeatCheckSender))
             return;
         // RMC14-end
         Contents.AddMessage(formatted);

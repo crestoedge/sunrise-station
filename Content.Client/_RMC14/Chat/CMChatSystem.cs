@@ -1,5 +1,5 @@
 ﻿using Content.Client.UserInterface.Systems.Chat.Widgets;
-using Content.Shared._RMC14.RMCCVar;
+using Content.Shared._Sunrise.SunriseCCVars;
 using Content.Shared.Chat;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Configuration;
@@ -22,7 +22,7 @@ public sealed class CMChatSystem : EntitySystem
     private void SubscribeCVar()
     {
         _config.OnValueChanged(
-            RMCCVars.RMCChatRepeatHistory,
+            SunriseCCVars.AntiSpamChatRepeatHistory,
             v => _repeatHistory = v,
             true);
     }

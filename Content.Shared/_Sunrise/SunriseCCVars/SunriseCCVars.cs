@@ -490,6 +490,8 @@ public sealed partial class SunriseCCVars : CVars
         CVarDef.Create("anti_spam.time_short", 1.5f, CVar.SERVER | CVar.ARCHIVE);
     public static readonly CVarDef<float> AntiSpamTimeLong =
         CVarDef.Create("anti_spam.time_long", 5f, CVar.SERVER | CVar.ARCHIVE);
+    public static readonly CVarDef<int> AntiSpamChatRepeatHistory =
+        CVarDef.Create("anti_spam.chat_repeat_history", 4, CVar.REPLICATED | CVar.SERVER);
 
     /// <summary>
     /// Вроде все очевидно
