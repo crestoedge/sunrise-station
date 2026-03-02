@@ -79,6 +79,7 @@
   cost: 7000
   recipeUnlocks:
   - BasicNVD
+  - BorgModuleNVD
   technologyPrerequisites:
   - HandcraftNVD
 
@@ -93,6 +94,7 @@
   cost: 9000
   recipeUnlocks:
   - BasicThermals
+  - BorgModuleTVD
 
 - type: technology
   id: Modsuits

@@ -243,7 +243,6 @@
   cost: 10000
   recipeUnlocks:
   - BorgModuleAdvancedCombat
-  - BorgModuleTVD
   radioChannels:
   - Security
 
