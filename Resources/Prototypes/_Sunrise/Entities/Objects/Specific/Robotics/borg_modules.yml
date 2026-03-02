@@ -397,6 +397,7 @@
     layers:
     - state: service
     - state: icon-bartender
+      sprite: _Sunrise/Objects/Specific/Robotics/borgmodule.rsi
   - type: ItemBorgModule
     hands:
     - item: BorgSodaDispenser
@@ -445,6 +446,7 @@
     layers:
     - state: service
     - state: icon-cook
+      sprite: _Sunrise/Objects/Specific/Robotics/borgmodule.rsi
   - type: ItemBorgModule
     hands:
     - item: KitchenKnife
