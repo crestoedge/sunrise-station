@@ -107,6 +107,11 @@ public sealed class BorgModuleInnateSystem : EntitySystem
                     if (!TryGetItemBattery(item, out var itemBattery))
                         continue;
 
+                    // Если уровень заряда меньше уровня заряда боргича (чтобы не заряжали борга)
+                    var chargeLevel = _battery.GetChargeLevel(itemBattery.AsNullable());
+                    if (!moduleComp.CanCharge && borgChargeLevel >= chargeLevel)
+                        continue;
+
                     // Добавляем в список балансировки
                     batteriesToBalance.Add(itemBattery);
                     // Ведём учет общего заряда / максимального заряда для балансировки
@@ -187,9 +192,11 @@ public sealed class BorgModuleInnateSystem : EntitySystem
         foreach (var item in module.Comp.AddedInnateItems)
             QueueDel(item);
 
-        EntityManager.RemoveComponents(args.ChassisEnt, module.Comp.InnateComponents);
+        // Проверяем валидность сущности перед удалением
+        if (!TerminatingOrDeleted(args.ChassisEnt))
+            EntityManager.RemoveComponents(args.ChassisEnt, module.Comp.InnateComponents);
 
-        // Чистим списки очищения
+        // Чистим служебные списки
         module.Comp.Actions.Clear();
         module.Comp.AddedInnateItems.Clear();
         module.Comp.ToggledOn.Clear();
@@ -338,7 +345,6 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     private void OnInnateUseItem(Entity<BorgModuleInnateComponent> ent, ref ModuleInnateUseItemEvent args)
     {
         _interactions.UseInHandInteraction(args.Performer, args.Item, false, true);
-        // UseInHand(args.Performer, args.Item);
         args.Handled = true;
     }
 
@@ -349,10 +355,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     {
         // Пытаемся взаимодействовать
         if (!_interactions.UseInHandInteraction(args.Performer, args.Item, false, true))
-        {
-            args.Handled = true;
             return;
-        }
 
         // Обновляем состояние в соответствии с текущим
         var wasToggled = ent.Comp.ToggledOn.Contains(args.Item);

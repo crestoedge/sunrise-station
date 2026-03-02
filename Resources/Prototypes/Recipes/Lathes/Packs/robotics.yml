@@ -41,12 +41,14 @@
   - BorgModuleAdvancedCleaning
   - BorgModuleAdvancedCombat # Sunrise_edit
   - BorgModuleAdvancedTool
-  - BorgModuleNVD
-  - BorgModuleTVD
-  - BorgModuleFloodLight
   - BorgModuleAdvancedClowning
   - BorgModuleAdvancedChemical
   - BorgModuleAdvancedMining
+  # Sunrise-start
+  - BorgModuleNVD
+  - BorgModuleTVD
+  - BorgModuleFloodLight
+  # Sunrise-end
 
 - type: latheRecipePack
   id: MechParts

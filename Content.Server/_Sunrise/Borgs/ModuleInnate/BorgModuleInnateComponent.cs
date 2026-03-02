@@ -40,6 +40,12 @@ public sealed partial class BorgModuleInnateComponent : Component
     public ComponentRegistry InnateComponents = new();
 
     /// <summary>
+    /// Можно ли заряжать борга предметами из модуля
+    /// </summary>
+    [DataField]
+    public bool CanCharge = false;
+
+    /// <summary>
     /// Айди добавленных предметов этим модулем
     /// Данный список нужен сугубо для корректной очистки
     /// </summary>

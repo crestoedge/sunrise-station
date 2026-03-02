@@ -6,7 +6,7 @@ using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Item.ItemToggle.Components;
 using Content.Shared.Popups;
-using Content.Shared.Silicons.Borgs.Components;
+using Content.Shared.Silicons.Borgs.Components; // Sunrise-Edit
 using Content.Shared.Temperature;
 using Content.Shared.Toggleable;
 using Content.Shared.Verbs;
