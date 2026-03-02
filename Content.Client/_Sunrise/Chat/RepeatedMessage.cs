@@ -1,7 +1,7 @@
 ﻿using Content.Shared.Chat;
 using Robust.Shared.Utility;
 
-namespace Content.Client._RMC14.Chat;
+namespace Content.Client._Sunrise.Chat;
 
 public sealed class RepeatedMessage(
     int index,
