@@ -192,6 +192,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
         // Чистим списки очищения
         module.Comp.Actions.Clear();
         module.Comp.AddedInnateItems.Clear();
+        module.Comp.ToggledOn.Clear();
     }
 
     /// <summary>
@@ -331,12 +332,6 @@ public sealed class BorgModuleInnateSystem : EntitySystem
         module.Comp.Actions.Add(action);
     }
 
-    private void UseInHand(EntityUid performer, EntityUid item)
-    {
-        var ev = new UseInHandEvent(performer);
-        RaiseLocalEvent(item, ev);
-    }
-
     /// <summary>
     /// Обработчик события использования предмета как будто он в руке
     /// </summary>
@@ -361,7 +356,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
 
         // Обновляем состояние в соответствии с текущим
         var wasToggled = ent.Comp.ToggledOn.Contains(args.Item);
-        if (wasToggled)
+        if (!wasToggled)
             ent.Comp.ToggledOn.Add(args.Item);
         else
             ent.Comp.ToggledOn.Remove(args.Item);
