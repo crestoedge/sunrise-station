@@ -20,7 +20,6 @@ using Robust.Shared.Player;
 using Robust.Shared.Replays;
 using Robust.Shared.Utility;
 using Content.Sunrise.Interfaces.Shared; // Sunrise-Sponsors
-using Content.Shared._RMC14.Chat; // RMC14-Edit
 
 namespace Content.Server.Chat.Managers;
 
@@ -358,7 +357,7 @@ internal sealed partial class ChatManager : IChatManager
         var netSource = _entityManager.GetNetEntity(source);
         user?.AddEntity(netSource);
 
-        var msg = new ChatMessage(channel, message, wrappedMessage, netSource, user?.Key, hideChat, colorOverride, audioPath, audioVolume, repeatCheckSender: !_entityManager.HasComponent<ChatRepeatIgnoreSenderComponent>(source)); // RMC14-edit
+        var msg = new ChatMessage(channel, message, wrappedMessage, netSource, user?.Key, hideChat, colorOverride, audioPath, audioVolume, repeatCheckSender: true); // Sunrise-edit
         _netManager.ServerSendMessage(new MsgChatMessage() { Message = msg }, client);
 
         if (!recordReplay)
@@ -380,7 +379,7 @@ internal sealed partial class ChatManager : IChatManager
         var netSource = _entityManager.GetNetEntity(source);
         user?.AddEntity(netSource);
 
-        var msg = new ChatMessage(channel, message, wrappedMessage, netSource, user?.Key, hideChat, colorOverride, audioPath, audioVolume, repeatCheckSender: !_entityManager.HasComponent<ChatRepeatIgnoreSenderComponent>(source)); // RMC14-edit
+        var msg = new ChatMessage(channel, message, wrappedMessage, netSource, user?.Key, hideChat, colorOverride, audioPath, audioVolume, repeatCheckSender: true); // Sunrise-edit
         _netManager.ServerSendToMany(new MsgChatMessage() { Message = msg }, clients);
 
         if (!recordReplay)
@@ -414,7 +413,7 @@ internal sealed partial class ChatManager : IChatManager
         var netSource = _entityManager.GetNetEntity(source);
         user?.AddEntity(netSource);
 
-        var msg = new ChatMessage(channel, message, wrappedMessage, netSource, user?.Key, hideChat, colorOverride, audioPath, audioVolume, repeatCheckSender: !_entityManager.HasComponent<ChatRepeatIgnoreSenderComponent>(source)); // RMC14-edit
+        var msg = new ChatMessage(channel, message, wrappedMessage, netSource, user?.Key, hideChat, colorOverride, audioPath, audioVolume, repeatCheckSender: true); // Sunrise-edit
         _netManager.ServerSendToAll(new MsgChatMessage() { Message = msg });
 
         if (!recordReplay)
