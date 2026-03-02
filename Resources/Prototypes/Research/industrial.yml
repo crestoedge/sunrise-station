@@ -171,6 +171,8 @@
     - PowerDrill
     - JawsOfLife
     - BorgModuleAdvancedTool
+    - BorgModuleNVD
+    - BorgModuleFloodLight
     - Fulton
     - FultonBeacon
 

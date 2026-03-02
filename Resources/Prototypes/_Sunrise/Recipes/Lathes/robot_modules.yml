@@ -1,6 +1,33 @@
 # Security Modules
- 
+
 - type: latheRecipe
   parent: BaseGoldBorgModuleRecipe
   id: BorgModuleAdvancedCombat
   result: BorgModuleAdvancedCombat
+
+- type: latheRecipe
+  parent: BaseGoldBorgModuleRecipe
+  id: BorgModuleNVD
+  result: BorgModuleNVD
+  materials:
+    Steel: 1000
+    Plastic: 500
+    Silver: 300
+    Gold: 100
+    Uranium: 300
+
+- type: latheRecipe
+  parent: BaseGoldBorgModuleRecipe
+  id: BorgModuleTVD
+  result: BorgModuleTVD
+  materials:
+    Steel: 1000
+    Plastic: 500
+    Silver: 200
+    Gold: 150
+    Diamond: 200
+
+- type: latheRecipe
+  parent: BaseGoldBorgModuleRecipe
+  id: BorgModuleFloodLight
+  result: BorgModuleFloodLight

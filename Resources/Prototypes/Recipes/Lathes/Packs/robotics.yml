@@ -41,6 +41,9 @@
   - BorgModuleAdvancedCleaning
   - BorgModuleAdvancedCombat # Sunrise_edit
   - BorgModuleAdvancedTool
+  - BorgModuleNVD
+  - BorgModuleTVD
+  - BorgModuleFloodLight
   - BorgModuleAdvancedClowning
   - BorgModuleAdvancedChemical
   - BorgModuleAdvancedMining
