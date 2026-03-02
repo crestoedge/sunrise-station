@@ -96,7 +96,7 @@
   parent: [ ClothingEyesNVD, BorgVisionDeviceBase ]
   id: NightVisionDeviceBorg
   name: borg NVD
-  description: Nightvision googles in the shell.
+  description: Nightvision goggles in the shell.
   categories: [ HideSpawnMenu ]
   components:
   - type: ToggleClothing
@@ -114,7 +114,7 @@
   parent: [ ClothingEyesGlassesThermal, BorgVisionDeviceBase ]
   id: ThermalVisionDeviceBorg
   name: borg TVD
-  description: Thermal googles in the shell.
+  description: Thermal goggles in the shell.
   categories: [ HideSpawnMenu ]
   components:
   - type: ToggleClothing
