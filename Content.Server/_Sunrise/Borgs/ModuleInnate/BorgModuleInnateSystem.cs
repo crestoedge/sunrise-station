@@ -94,7 +94,6 @@ public sealed class BorgModuleInnateSystem : EntitySystem
             // Подготавливаем переменные
             var borgChargeLevel = borgCharge / borgBattery.Value.Comp.MaxCharge;
 
-            // TODO: make charging multiplier work by multiplying current item charge and max charge for the calculation and then divide by the multiplier
             // Для всех модулей (берём айтемы из модулей, а не контейнера, чтобы потом можно было задавать рейты заряда в будущем)
             foreach (var moduleUid in chassis.ModuleContainer.ContainedEntities)
             {
@@ -107,12 +106,6 @@ public sealed class BorgModuleInnateSystem : EntitySystem
                     // Если у него есть батарея
                     if (!TryGetItemBattery(item, out var itemBattery))
                         continue;
-
-                    // Если уровень заряда меньше уровня заряда боргича (чтобы не заряжали борга)
-                    // TODO: возможно лучше просто давать более маленькие батарейки?
-                    // var charge = _battery.GetCharge(itemBattery.AsNullable());
-                    // if (borgChargeLevel >= charge / itemBattery.Comp.MaxCharge)
-                    //     continue;
 
                     // Добавляем в список балансировки
                     batteriesToBalance.Add(itemBattery);
