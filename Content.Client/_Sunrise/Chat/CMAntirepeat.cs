@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Content.Client.UserInterface.Systems.Chat.Widgets;
+﻿using Content.Client.UserInterface.Systems.Chat.Widgets;
 using Content.Shared._Sunrise.SunriseCCVars;
 using Content.Shared.Chat;
 using Robust.Client.UserInterface.Controls;
@@ -8,21 +7,19 @@ using Robust.Shared.Utility;
 
 namespace Content.Client._Sunrise.Chat;
 
-public sealed class CMChatSystem : EntitySystem
+public sealed class CMAntirepeat
 {
     [Dependency] private readonly IConfigurationManager _config = default!;
 
     private int _repeatHistory;
 
-    public override void Initialize()
+    public void Initialize()
     {
-        base.Initialize();
         SubscribeCVar();
     }
 
-    public override void Shutdown()
+    public void Shutdown()
     {
-        base.Shutdown();
         UnsubscribeCVar();
     }
 

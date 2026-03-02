@@ -1,4 +1,5 @@
 ﻿using Content.Client._Sunrise;
+using Content.Client._Sunrise.Chat;
 using Content.Client._Sunrise.Contributors;
 using Content.Client._Sunrise.InteractionsPanel.Models;
 using Content.Client._Sunrise.IoC;
@@ -74,6 +75,7 @@ namespace Content.Client.IoC
             collection.Register<ContributorsManager>();
             collection.Register<PlayerCacheManager>();
             collection.Register<NetTexturesManager>();
+            collection.Register<CMAntirepeat>();
             SunriseClientContentIoC.Register();
             collection.Register<CustomInteractionService, CustomInteractionService>(true);
             // Sunrise-End

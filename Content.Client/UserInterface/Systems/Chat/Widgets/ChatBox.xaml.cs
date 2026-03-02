@@ -53,8 +53,8 @@ public partial class ChatBox : UIWidget
 
     [Dependency] private readonly IEntityManager _entManager = default!;
     [Dependency] private readonly ILogManager _log = default!;
-    [Dependency] private readonly CMChatSystem _cmChat = default!; // Sunrise-edit
     [Dependency] private readonly IConfigurationManager _configurationManager = default!;
+    [Dependency] private readonly CMAntirepeat _cmAntirepeat = default!; // Sunrise
 
     private readonly ISawmill _sawmill;
     private readonly ChatUIController _controller;
@@ -218,10 +218,10 @@ public partial class ChatBox : UIWidget
         formatted.PushColor(color);
         formatted.AddMarkupOrThrow(message);
         formatted.Pop();
-        // RMC14-start
-        if (_cmChat.TryRepetition(this, Contents, formatted, sender, unwrapped, channel, repeatCheckSender))
+        // Sunrise-Start
+        if (_cmAntirepeat.TryRepetition(this, Contents, formatted, sender, unwrapped, channel, repeatCheckSender))
             return;
-        // RMC14-end
+        // Sunrise-End
         Contents.AddMessage(formatted);
         Contents.SetMessage(^1, formatted, allowEmoji ? TagsAllowed : TagsAllowedNoEmoji); // Sunrise-Edit
     }

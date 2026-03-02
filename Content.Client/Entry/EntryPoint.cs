@@ -1,6 +1,7 @@
 using Content.Client._RMC14.Explosion;
 using Content.Client._RMC14.Xenonids.Screech;
 using Content.Client._Sunrise;
+using Content.Client._Sunrise.Chat;
 using Content.Client._Sunrise.Contributors;
 using Content.Client._Sunrise.Entry;
 using Content.Client._Sunrise.PlayerCache;
@@ -90,6 +91,7 @@ namespace Content.Client.Entry
         [Dependency] private readonly ContributorsManager _contributorsManager = default!; // Sunrise-Edit
         [Dependency] private readonly PlayerCacheManager _playerCacheManager = default!; // Sunrise-Edit
         [Dependency] private readonly NetTexturesManager _netTexturesManager = default!; // Sunrise-Edit
+        [Dependency] private readonly CMAntirepeat _cmAntirepeat = default!; // Sunrise-Edit
 
         public override void PreInit()
         {
@@ -165,6 +167,7 @@ namespace Content.Client.Entry
             _contributorsManager.Initialize(); // Sunrise-Edit
             _playerCacheManager.Initialize(); // Sunrise-Edit
             _netTexturesManager.Initialize(); // Sunrise-Edit
+            _cmAntirepeat.Initialize(); // Sunrise-Edit
 
             // Sunrise-Sponsors-Start
             SunriseClientEntry.Init();
