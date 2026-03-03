@@ -34,11 +34,6 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     // Название контейнера-хранилища встроенных предметов
     private const string InnateItemsContainerId = "module_innate_items";
 
-    // Прототипы действий над предметами
-    private static readonly EntProtoId InnateUseItemAction = "ModuleInnateUseItemAction";
-    private static readonly EntProtoId InnateToggleItemAction = "ModuleInnateToggleItemAction";
-    private static readonly EntProtoId InnateInteractionItemAction = "ModuleInnateInteractionItemAction";
-
     /// <summary>
     /// Период обновления баланса зарядов между боргом и встроенными предметами.
     /// </summary>
@@ -294,7 +289,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     {
         var item = CreateInnateItem(itemProto, module, container);
         var ev = new ModuleInnateUseItemEvent(item);
-        var action = CreateAction(item, module.Owner, ev, InnateUseItemAction);
+        var action = CreateAction(item, module.Owner, ev, module.Comp.InnateUseItemAction);
         AssignAction(chassis, module, action);
     }
 
@@ -310,7 +305,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     {
         var item = CreateInnateItem(itemProto, module, container);
         var ev = new ModuleInnateInteractionItemEvent(item);
-        var action = CreateAction(item, module.Owner, ev, InnateInteractionItemAction);
+        var action = CreateAction(item, module.Owner, ev, module.Comp.InnateInteractionItemAction);
         AssignAction(chassis, module, action);
     }
 
@@ -326,7 +321,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     {
         var item = CreateInnateItem(itemProto, module, container);
         var ev = new ModuleInnateToggleItemEvent(item);
-        var action = CreateAction(item, module.Owner, ev, InnateToggleItemAction);
+        var action = CreateAction(item, module.Owner, ev, module.Comp.InnateToggleItemAction);
         AssignAction(chassis, module, action);
     }
 
