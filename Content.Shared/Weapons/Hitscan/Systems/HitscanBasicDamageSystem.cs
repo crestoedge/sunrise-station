@@ -1,12 +1,15 @@
 using Content.Shared.Damage.Systems;
+using Content.Shared.Database;
 using Content.Shared.Weapons.Hitscan.Components;
 using Content.Shared.Weapons.Hitscan.Events;
+using Content.Shared.Administration.Logs;
 
 namespace Content.Shared.Weapons.Hitscan.Systems;
 
 public sealed class HitscanBasicDamageSystem : EntitySystem
 {
     [Dependency] private readonly DamageableSystem _damage = default!;
+    [Dependency] private readonly ISharedAdminLogManager _log = default!;
 
     public override void Initialize()
     {
@@ -36,6 +39,12 @@ public sealed class HitscanBasicDamageSystem : EntitySystem
 
         if (damageDealt == null)
             return;
+
+        _log.Add(
+            LogType.Damaged,
+            $"{ToPrettyString(args.Data.Shooter):user} damaged {ToPrettyString(args.Data.HitEntity):target}"
+                + $" using {ToPrettyString(args.Data.Gun):entity} by {damageDealt.GetTotal():0.##}."
+        );
 
         var damageEvent = new HitscanDamageDealtEvent
         {
