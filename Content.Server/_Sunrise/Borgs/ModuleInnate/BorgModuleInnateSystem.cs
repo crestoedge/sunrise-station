@@ -119,9 +119,9 @@ public sealed class BorgModuleInnateSystem : EntitySystem
                     if (!TryGetItemBattery(item, out var itemBattery))
                         continue;
 
-                    // Если уровень заряда меньше уровня заряда боргича (чтобы не заряжали борга)
+                    // Если уровень заряда больше уровня заряда боргича (чтобы не заряжали борга)
                     var chargeLevel = _battery.GetChargeLevel(itemBattery.AsNullable());
-                    if (!moduleComp.CanCharge && borgChargeLevel >= chargeLevel)
+                    if (!moduleComp.CanCharge && chargeLevel > borgChargeLevel)
                         continue;
 
                     // Добавляем в список балансировки
