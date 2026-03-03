@@ -61,12 +61,6 @@ public sealed partial class BorgModuleInnateComponent : Component
     public Container? InnateItemsContainer = null;
 
     /// <summary>
-    /// Борг, которому установлен данный модуль
-    /// </summary>
-    [ViewVariables]
-    public EntityUid? Borg = null;
-
-    /// <summary>
     /// Экшены для борга, созданные данным модулем
     /// Данный список нужен сугубо для корректной очистки
     /// </summary>

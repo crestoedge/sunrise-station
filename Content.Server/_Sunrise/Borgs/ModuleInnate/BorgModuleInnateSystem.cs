@@ -84,29 +84,9 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     /// </summary>
     private void BalanceInnateItemCharges()
     {
-        var moduleQuery = EntityQueryEnumerator<BorgModuleInnateComponent>();
+        var borgQuery = EntityQueryEnumerator<BorgChassisComponent, BorgWithInnateModulesComponent>();
 
-        // Создаем список боргов с иннейт модулями
-        _borgInfo.Clear();
-        while (moduleQuery.MoveNext(out var moduleUid, out var moduleComp))
-        {
-            // Проверяем, что модуль установлен на борга и получаем его шасси и слот батарейки
-            if (moduleComp.Borg is not { } borgUid)
-                continue;
-
-            if (!_borgInfo.ContainsKey(borgUid))
-            {
-                if (!_borgChassisQuery.TryGetComponent(borgUid, out var borgChassis) || !_powerCellSlotQuery.TryGetComponent(borgUid, out var borgSlot))
-                    continue;
-                _borgInfo[borgUid] = (borgChassis, borgSlot, new List<BorgModuleInnateComponent> { moduleComp });
-            }
-            else
-            {
-                _borgInfo[borgUid].Modules.Add(moduleComp);
-            }
-        }
-
-        foreach (var (borgUid, (chassis, borgCellSlot, modules)) in _borgInfo)
+        while (borgQuery.MoveNext(out var borgUid, out var chassis, out var innateModules))
         {
             // Пытаемся получить основную батарею борга.
             if (!_powerCell.TryGetBatteryFromSlot(borgUid, out var borgBattery))
@@ -117,20 +97,23 @@ public sealed class BorgModuleInnateSystem : EntitySystem
             if (borgCharge <= 5f || borgBattery.Value.Comp.MaxCharge <= 5f)
                 continue;
 
-            // Начинаем балансировку с добавления батарейки борга в список балансировки
-            _batteriesToBalance.Clear();
-            _batteriesToBalance.Add(borgBattery.Value);
-
+            // Батарейки, которые будут отбалансированы, включая батарею борга
+            var batteriesToBalance = new List<Entity<BatteryComponent>> { borgBattery.Value };
             // Нужные значения для балансировки
             var totalChargeToBalance = borgCharge;
             var totalMaxChargeToBalance = borgBattery.Value.Comp.MaxCharge;
+
+            // Подготавливаем переменные
             var borgChargeLevel = borgCharge / borgBattery.Value.Comp.MaxCharge;
 
-            foreach (var moduleComp in modules)
+            // Для всех модулей (берём айтемы из модулей, а не контейнера, чтобы потом можно было задавать рейты заряда в будущем)
+            foreach (var moduleUid in innateModules.Modules)
             {
+                // С компонентом иннейтов
+                if (!_borgModuleInnateQuery.TryComp(moduleUid, out var moduleComp))
+                    continue;
                 // Для каждого предмета модуля
-                // (контейнер не должен быть null на данной стадии, но нужно проверить)
-                foreach (var item in moduleComp.InnateItemsContainer?.ContainedEntities ?? Enumerable.Empty<EntityUid>())
+                foreach (var item in moduleComp.InnateItemsContainer?.ContainedEntities ?? [])
                 {
                     // Если у него есть батарея
                     if (!TryGetItemBattery(item, out var itemBattery))
@@ -142,9 +125,9 @@ public sealed class BorgModuleInnateSystem : EntitySystem
                         continue;
 
                     // Добавляем в список балансировки
-                    _batteriesToBalance.Add(itemBattery);
+                    batteriesToBalance.Add(itemBattery);
                     // Ведём учет общего заряда / максимального заряда для балансировки
-                    // Умножаем на PowerUseCoefficient для уменьшения / увеличения потребления
+                    // Умножаем на PowerUseCoefficient для уменьшения потребления
                     totalChargeToBalance += _battery.GetCharge(itemBattery.AsNullable()) * moduleComp.PowerUseCoefficient;
                     totalMaxChargeToBalance += itemBattery.Comp.MaxCharge * moduleComp.PowerUseCoefficient;
                 }
@@ -153,7 +136,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
             // Считаем уровень балансировки
             var setLevel = totalChargeToBalance / totalMaxChargeToBalance;
             // Раздаем заряд каждой батарее обратно в балансированном виде
-            foreach (var battery in _batteriesToBalance)
+            foreach (var battery in batteriesToBalance)
                 _battery.SetCharge((battery.Owner, battery.Comp), setLevel * battery.Comp.MaxCharge);
         }
     }
@@ -164,7 +147,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     private bool TryGetItemBattery(EntityUid item, out Entity<BatteryComponent> battery)
     {
         // Сперва пробуем через слот аккумулятора, если он есть.
-        if (_powerCellSlotQuery.TryGetComponent(item, out var slot))
+        if (_powerCellSlotQuery.TryComp(item, out var slot))
         {
             if (_powerCell.TryGetBatteryFromSlotOrEntity((item, slot), out var slotBattery) && slotBattery != null)
             {
@@ -174,7 +157,7 @@ public sealed class BorgModuleInnateSystem : EntitySystem
         }
 
         // Если слота нет, проверяем является ли сам предмет батарейкой.
-        if (_batteryQuery.TryGetComponent(item, out var directBattery))
+        if (_batteryQuery.TryComp(item, out var directBattery))
         {
             battery = (item, directBattery);
             return true;
@@ -189,20 +172,23 @@ public sealed class BorgModuleInnateSystem : EntitySystem
     /// </summary>
     private void OnInstalled(Entity<BorgModuleInnateComponent> module, ref BorgModuleInstalledEvent args)
     {
+        // Делаем контейнер для встроенных предметов
         var containerManager = EnsureComp<ContainerManagerComponent>(args.ChassisEnt);
         var container = _containers.EnsureContainer<Container>(
             args.ChassisEnt,
             InnateItemsContainerId + module.Owner.ToString(),
             containerManager
         );
-        // Позволяет встраивать предметы-светильники в модуль
+        // Позволяет встраивать рабочие предметы-светильники в модуль
         container.OccludesLight = false;
-
+        // Отслеживаем контейнер в компоненте для дальнейшего использования
         module.Comp.InnateItemsContainer = container;
-        module.Comp.Borg = args.ChassisEnt;
 
+        var withInnateModules = EnsureComp<BorgWithInnateModulesComponent>(args.ChassisEnt);
+        withInnateModules.Modules.Add(module.Owner);
+
+        // Добавляем прописанные иннейты
         EntityManager.AddComponents(args.ChassisEnt, module.Comp.InnateComponents);
-
         AddItems(args.ChassisEnt, module, container);
     }
 
@@ -224,9 +210,18 @@ public sealed class BorgModuleInnateSystem : EntitySystem
         module.Comp.ToggledOn.Clear();
 
         // Проверяем валидность сущности перед дополнительными очистками
+        // Работа с компонентами удаляемой сущности может привести к неприятным последствиям
         if (!TerminatingOrDeleted(args.ChassisEnt))
         {
             EntityManager.RemoveComponents(args.ChassisEnt, module.Comp.InnateComponents);
+
+            // Удаляем модуль из регистра модулей-иннейтов
+            if (TryComp<BorgWithInnateModulesComponent>(args.ChassisEnt, out var withInnateModules))
+            {
+                withInnateModules.Modules.Remove(module.Owner);
+                if (withInnateModules.Modules.Count == 0)
+                    RemComp<BorgWithInnateModulesComponent>(args.ChassisEnt);
+            }
 
             // Получаем контейнер модуля из борга, чистим и удаляем его.
             if (
@@ -243,8 +238,8 @@ public sealed class BorgModuleInnateSystem : EntitySystem
                 containerManager.Containers.Remove(InnateItemsContainerId + module.Owner.ToString());
             }
         }
+
         module.Comp.InnateItemsContainer = null;
-        module.Comp.Borg = null;
     }
 
     /// <summary>
