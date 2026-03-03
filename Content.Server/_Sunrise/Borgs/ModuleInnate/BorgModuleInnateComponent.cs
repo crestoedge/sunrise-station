@@ -1,3 +1,4 @@
+using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server._Sunrise.Borgs.ModuleInnate;
@@ -18,26 +19,26 @@ public sealed partial class BorgModuleInnateComponent : Component
     /// Предметы, которые активируются прямо в руке
     /// </summary>
     [DataField]
-    public List<EntProtoId?> UseItems = new();
+    public List<EntProtoId?> UseItems = [];
 
     /// <summary>
     /// Предметы, с помощью которых можно взаимодействовать с сущностями
     /// </summary>
     [DataField]
-    public List<EntProtoId?> InteractionItems = new();
+    public List<EntProtoId?> InteractionItems = [];
 
     /// <summary>
     /// Предметы, которые переключаются при активации в руке
     /// </summary>
     [DataField]
-    public List<EntProtoId?> ToggleItems = new();
+    public List<EntProtoId?> ToggleItems = [];
 
     /// <summary>
     /// Компоненты, которые будут добавлены боргу при установке модуля
     /// Будут удалены после его изъятия!
     /// </summary>
     [DataField]
-    public ComponentRegistry InnateComponents = new();
+    public ComponentRegistry InnateComponents = [];
 
     /// <summary>
     /// Можно ли заряжать борга предметами из модуля
@@ -46,23 +47,28 @@ public sealed partial class BorgModuleInnateComponent : Component
     public bool CanCharge = false;
 
     /// <summary>
-    /// Айди добавленных предметов этим модулем
-    /// Данный список нужен сугубо для корректной очистки
+    /// Контейнер с предметами модуля
     /// </summary>
     [ViewVariables]
-    public List<EntityUid> AddedInnateItems = new();
+    public Container? InnateItemsContainer = null;
+
+    /// <summary>
+    /// Борг, которому установлен данный модуль
+    /// </summary>
+    [ViewVariables]
+    public EntityUid? Borg = null;
 
     /// <summary>
     /// Экшены для борга, созданные данным модулем
     /// Данный список нужен сугубо для корректной очистки
     /// </summary>
     [ViewVariables]
-    public List<EntityUid> Actions = new();
+    public List<EntityUid> Actions = [];
 
     /// <summary>
     /// Список включенных предметов
     /// Данный список нужен сугубо для корректной очистки
     /// </summary>
     [ViewVariables]
-    public List<EntityUid> ToggledOn = new();
+    public List<EntityUid> ToggledOn = [];
 }
