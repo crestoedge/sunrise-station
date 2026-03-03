@@ -45,7 +45,7 @@ public sealed partial class BorgModuleInnateComponent : Component
     /// Компоненты, которые будут добавлены боргу при установке модуля
     /// Будут удалены после его изъятия!
     /// </summary>
-    [DataField]
+    [DataField(customTypeSerializer: typeof(Robust.Shared.Serialization.TypeSerializers.Implementations.ComponentRegistrySerializer))]
     public ComponentRegistry InnateComponents = [];
 
     /// <summary>
