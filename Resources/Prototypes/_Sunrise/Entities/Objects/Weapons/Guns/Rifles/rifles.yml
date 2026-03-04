@@ -84,6 +84,14 @@
         knockback: 0.1
       Felinid:
         knockback: 0.1
+  # Starlight
+  - type: ContainerFill
+    containers:
+      firing_pin:
+      - FiringPin
+  - type: FiringPinHolder
+    supportedPins: [ Rifle, GunUpgrade ]
+  # Starlight
 
 - type: entity
   name: AKM-U
