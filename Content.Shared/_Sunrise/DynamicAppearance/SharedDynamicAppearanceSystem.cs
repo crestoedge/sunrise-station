@@ -1,5 +1,7 @@
-using Content.Shared.Humanoid;
+﻿using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
+using Robust.Shared.Enums;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared._Sunrise.DynamicAppearance;
@@ -10,58 +12,90 @@ public enum DynamicAppearanceUiKey
     Key,
 }
 
+/// <summary>
+/// Client -> Server: commit the complete appearance draft.
+/// Replaces all previous per-field messages.
+/// </summary>
 [Serializable, NetSerializable]
-public sealed class DynamicAppearanceUIMarkingSetMessage : BoundUserInterfaceMessage
+public sealed class DynamicAppearanceSaveMessage : BoundUserInterfaceMessage
 {
     public MarkingSet MarkingSet { get; }
-    public bool ResendState { get; }
+    public Sex Sex { get; }
+    public int Age { get; }
+    public Gender Gender { get; }
+    public string Voice { get; }
+    public Color SkinColor { get; }
+    public Color EyeColor { get; }
+    public Dictionary<HumanoidVisualLayers, CustomBaseLayerInfo> CustomBaseLayers { get; }
+    public float Width { get; }
+    public float Height { get; }
 
-    public DynamicAppearanceUIMarkingSetMessage(MarkingSet set, bool resendState)
+    public DynamicAppearanceSaveMessage(
+        MarkingSet markingSet,
+        Sex sex,
+        int age,
+        Gender gender,
+        string voice,
+        Color skinColor,
+        Color eyeColor,
+        Dictionary<HumanoidVisualLayers, CustomBaseLayerInfo> customBaseLayers,
+        float width,
+        float height)
     {
-        MarkingSet = set;
-        ResendState = resendState;
+        MarkingSet = markingSet;
+        Sex = sex;
+        Age = age;
+        Gender = gender;
+        Voice = voice;
+        SkinColor = skinColor;
+        EyeColor = eyeColor;
+        CustomBaseLayers = customBaseLayers;
+        Width = width;
+        Height = height;
     }
 }
 
+/// <summary>
+/// Server -> Client: full appearance snapshot to populate the editor UI.
+/// </summary>
 [Serializable, NetSerializable]
-public sealed class DynamicAppearanceUIBaseLayersSetMessage : BoundUserInterfaceMessage
+public sealed class DynamicAppearanceState : BoundUserInterfaceState
 {
-    public DynamicAppearanceUIBaseLayersSetMessage(HumanoidVisualLayers layer, CustomBaseLayerInfo? info, bool resendState)
-    {
-        Layer = layer;
-        Info = info;
-        ResendState = resendState;
-    }
+    public MarkingSet MarkingSet { get; }
+    public string Species { get; }
+    public Sex Sex { get; }
+    public int Age { get; }
+    public Gender Gender { get; }
+    public string Voice { get; }
+    public Color SkinColor { get; }
+    public Color EyeColor { get; }
+    public Dictionary<HumanoidVisualLayers, CustomBaseLayerInfo> CustomBaseLayers { get; }
+    public float Width { get; }
+    public float Height { get; }
 
-    public HumanoidVisualLayers Layer { get; }
-    public CustomBaseLayerInfo? Info { get; }
-    public bool ResendState { get; }
-}
-
-[Serializable, NetSerializable]
-public sealed class DynamicAppearanceUIState : BoundUserInterfaceState
-{
-    public DynamicAppearanceUIState(
+    public DynamicAppearanceState(
         MarkingSet markingSet,
         string species,
-        string bodyType,
         Sex sex,
+        int age,
+        Gender gender,
+        string voice,
         Color skinColor,
-        Dictionary<HumanoidVisualLayers, CustomBaseLayerInfo> customBaseLayers
-    )
+        Color eyeColor,
+        Dictionary<HumanoidVisualLayers, CustomBaseLayerInfo> customBaseLayers,
+        float width,
+        float height)
     {
         MarkingSet = markingSet;
         Species = species;
-        BodyType = bodyType;
         Sex = sex;
+        Age = age;
+        Gender = gender;
+        Voice = voice;
         SkinColor = skinColor;
+        EyeColor = eyeColor;
         CustomBaseLayers = customBaseLayers;
+        Width = width;
+        Height = height;
     }
-
-    public MarkingSet MarkingSet { get; }
-    public string Species { get; }
-    public string BodyType { get; }
-    public Sex Sex { get; }
-    public Color SkinColor { get; }
-    public Dictionary<HumanoidVisualLayers, CustomBaseLayerInfo> CustomBaseLayers { get; }
 }

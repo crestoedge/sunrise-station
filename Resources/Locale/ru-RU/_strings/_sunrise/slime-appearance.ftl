@@ -1,2 +1,9 @@
-slime-appearance-verb-text = Изменить внешность
-slime-appearance-window-title = Редактор внешности слайма
+dynamic-appearance-verb = Изменить внешность
+dynamic-appearance-window-title = Редактор внешности
+dynamic-appearance-save = Сохранить
+dynamic-appearance-reset = Сбросить
+dynamic-appearance-skin-color-label = Цвет кожи
+dynamic-appearance-eye-color-label = Цвет глаз
+dynamic-appearance-markings-label = Маркировки
+dynamic-appearance-height-label = Рост: { $value }%
+dynamic-appearance-width-label = Ширина: { $value }%
