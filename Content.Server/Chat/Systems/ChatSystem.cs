@@ -942,6 +942,15 @@ public sealed partial class ChatSystem : SharedChatSystem
             var entRange = MessageRangeCheck(session, data, range);
             if (entRange == MessageRangeCheckResult.Disallowed)
                 continue;
+            // Sunrise-start
+            // Проверка на наличие видимости для эмоутов
+            if (
+                channel == ChatChannel.Emotes
+                && session.AttachedEntity is not null
+                && !_examineSystem.InRangeUnOccluded(source, session.AttachedEntity.Value, VoiceRange)
+            )
+                continue;
+            // Sunrise-end
             var entHideChat = entRange == MessageRangeCheckResult.HideChat;
             _chatManager.ChatMessageToOne(channel, message, wrappedMessage, source, entHideChat, session.Channel, author: author, colorOverride: color);
         }
