@@ -29,7 +29,7 @@ public sealed class ThermalVisionSystem : EntitySystem
         SubscribeLocalEvent<ThermalVisionComponent, LocalPlayerAttachedEvent>(OnPlayerAttached);
         SubscribeLocalEvent<ThermalVisionComponent, LocalPlayerDetachedEvent>(OnPlayerDetached);
 
-        _throughWallsOverlay = new();
+        _throughWallsOverlay = new ThroughWallsVisionOverlay(true);
         _overlay = new();
     }
 

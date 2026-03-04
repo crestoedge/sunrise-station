@@ -13,17 +13,23 @@ public sealed class ThroughWallsVisionOverlay : Overlay
     [Dependency] private readonly IEntityManager _entityManager = default!;
     [Dependency] private readonly IPlayerManager _playerManager = default!;
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
+    private SpriteSystem _spriteSystem = default!;
     private readonly ContainerSystem _containerSystem;
     private readonly TransformSystem _transform;
     private readonly ShaderInstance _shader;
 
     public override bool RequestScreenTexture => true;
     public override OverlaySpace Space => OverlaySpace.WorldSpace;
-    public ThroughWallsVisionOverlay()
+
+    public readonly bool ApplyCamo;
+    private EntityQuery<XRayCamoComponent> _camoQuery = default!;
+    public ThroughWallsVisionOverlay(bool applyCamo = false)
     {
         IoCManager.InjectDependencies(this);
         _transform = _entityManager.System<TransformSystem>();
         _containerSystem = _entityManager.System<ContainerSystem>();
+
+        ApplyCamo = applyCamo;
 
         _shader = _prototypeManager.Index<ShaderPrototype>("BrightnessShader").InstanceUnique();
     }
@@ -49,6 +55,11 @@ public sealed class ThroughWallsVisionOverlay : Overlay
 
     protected override void Draw(in OverlayDrawArgs args)
     {
+        if (_entityManager.SystemOrNull<SpriteSystem>() is not { } spriteSystem)
+            return;
+        _spriteSystem = spriteSystem;
+        _camoQuery = _entityManager.GetEntityQuery<XRayCamoComponent>();
+
         if (ScreenTexture == null)
             return;
 
@@ -63,7 +74,17 @@ public sealed class ThroughWallsVisionOverlay : Overlay
             if (xform.MapID != args.MapId || _containerSystem.IsEntityInContainer(uid, meta)) continue;
             var (position, rotation) = _transform.GetWorldPositionRotation(xform);
 
-            sprite.Render(worldHandle, eyeRotation, rotation, null, position);
+            if (ApplyCamo && _camoQuery.TryGetComponent(uid, out var camoComp))
+            {
+                var prevColor = sprite.Color;
+                var maskingAmount = Math.Clamp(1f - camoComp.CamoLevel, 0f, 1f);
+                _spriteSystem.SetColor((uid, sprite), Color.FromHsv(new System.Numerics.Vector4(0, 0, maskingAmount, maskingAmount)));
+                _spriteSystem.RenderSprite((uid, sprite), worldHandle, eyeRotation, rotation, position);
+                _spriteSystem.SetColor((uid, sprite), prevColor);
+                continue;
+            }
+
+            _spriteSystem.RenderSprite((uid, sprite), worldHandle, eyeRotation, rotation, position);
         }
 
         worldHandle.UseShader(null);
