@@ -5,6 +5,7 @@ using Content.Shared._Sunrise.MarkingEffects;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
 using Content.Shared.Humanoid.Prototypes;
+using Content.Shared.Inventory;
 using Content.Shared.Preferences;
 using Robust.Client.Utility;
 using Robust.Shared.Map;
@@ -43,37 +44,28 @@ public sealed partial class DynamicAppearanceWindow
     // ═══════════ Preview refresh ═══════════
 
     /// <summary>
-    /// Switch SpriteView between the real entity (with equipment) and a dummy entity (appearance only).
+    /// Always show a client-side dummy for the preview (live-updating appearance).
+    /// When clothes are ON the dummy is given copies of the real entity's equipped items.
+    /// When clothes are OFF the dummy shows bare appearance only.
     /// </summary>
     private void RefreshPreview()
     {
-        if (_showClothes)
-        {
-            // Show the real entity — it has all current equipment visible.
-            if (_entManager.EntityExists(_previewEntity))
-                SpriteView.SetEntity(_previewEntity);
+        RebuildDummy();
 
-            DestroyDummy();
-        }
-        else
-        {
-            // Show a clothes-off dummy that mirrors the current draft appearance.
-            RebuildDummy();
-
-            if (_entManager.EntityExists(_dummyEntity))
-                SpriteView.SetEntity(_dummyEntity);
-        }
+        if (_entManager.EntityExists(_dummyEntity))
+            SpriteView.SetEntity(_dummyEntity);
 
         ApplyPreviewRotation();
     }
 
     /// <summary>
-    /// Lightweight refresh: update the dummy if it exists and is visible (clothes OFF).
+    /// Lightweight refresh: re-apply the current draft appearance to the dummy.
     /// Called by handlers after every draft mutation (color changed, marking added, etc.).
+    /// The clothing items on the dummy are preserved — only the humanoid appearance changes.
     /// </summary>
     private void RefreshDummyPreview()
     {
-        if (_showClothes || !_entManager.EntityExists(_dummyEntity))
+        if (!_entManager.EntityExists(_dummyEntity))
             return;
 
         ApplyDraftToDummy();
@@ -89,7 +81,8 @@ public sealed partial class DynamicAppearanceWindow
     // ═══════════ Dummy lifecycle ═══════════
 
     /// <summary>
-    /// Creates (or re-creates) the client-side dummy entity and applies the current draft appearance.
+    /// Creates (or re-creates) the client-side dummy entity, applies the current draft appearance,
+    /// and — when "show clothes" is enabled — copies equipped items from the real entity.
     /// </summary>
     private void RebuildDummy()
     {
@@ -100,6 +93,33 @@ public sealed partial class DynamicAppearanceWindow
 
         _dummyEntity = _entManager.SpawnEntity(speciesProto.DollPrototype, MapCoordinates.Nullspace);
         ApplyDraftToDummy();
+
+        if (_showClothes && _entManager.EntityExists(_previewEntity))
+            GiveDummyInventory(_dummyEntity, _previewEntity);
+    }
+
+    /// <summary>
+    /// Copies the equipped items from <paramref name="source"/> onto <paramref name="dummy"/>.
+    /// Items are spawned as new client-side entities so the real inventory is untouched.
+    /// </summary>
+    private void GiveDummyInventory(EntityUid dummy, EntityUid source)
+    {
+        if (!_inventorySystem.TryGetSlots(dummy, out var slots))
+            return;
+
+        foreach (var slot in slots)
+        {
+            if (!_inventorySystem.TryGetSlotEntity(source, slot.Name, out var slotItem))
+                continue;
+
+            var meta = _entManager.GetComponent<MetaDataComponent>(slotItem.Value);
+            var proto = meta.EntityPrototype;
+            if (proto == null)
+                continue;
+
+            var copy = _entManager.SpawnEntity(proto.ID, MapCoordinates.Nullspace);
+            _inventorySystem.TryEquip(dummy, copy, slot.Name, silent: true, force: true);
+        }
     }
 
     /// <summary>
@@ -185,12 +205,18 @@ public sealed partial class DynamicAppearanceWindow
             _draftState.Width,
             _draftState.Height);
 
+        // Use the correct body type for the species so non-human species (e.g. slime) render
+        // with their proper sprites instead of falling back to the default human body type.
+        var bodyType = _speciesProto?.BodyTypes.FirstOrDefault()
+            ?? SharedHumanoidAppearanceSystem.DefaultBodyType;
+
         return HumanoidCharacterProfile
             .DefaultWithSpecies(_draftState.Species)
             .WithCharacterAppearance(appearance)
             .WithSex(_draftState.Sex)
             .WithGender(_draftState.Gender)
             .WithAge(_draftState.Age)
-            .WithVoice(_draftState.Voice);
+            .WithVoice(_draftState.Voice)
+            .WithBodyType(bodyType);
     }
 }

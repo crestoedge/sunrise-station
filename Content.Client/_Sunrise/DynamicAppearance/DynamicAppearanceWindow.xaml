@@ -3,7 +3,7 @@
                xmlns:humanoid="clr-namespace:Content.Client.Humanoid"
                xmlns:cc="clr-namespace:Content.Client.Administration.UI.CustomControls"
                Title="{Loc 'dynamic-appearance-window-title'}"
-               MinSize="750 600">
+               MinSize="900 600">
     <BoxContainer Orientation="Horizontal" HorizontalExpand="True" VerticalExpand="True">
         <!-- ═══════════ Left: editor controls ═══════════ -->
         <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" MinSize="440 0">
@@ -86,7 +86,6 @@
                         <Label Text="{Loc 'dynamic-appearance-markings-label'}" StyleClasses="LabelHeading" />
                         <humanoid:MarkingPicker Name="Markings" IgnoreCategories="Hair,FacialHair" />
                     </BoxContainer>
-
                 </BoxContainer>
             </ScrollContainer>
         </BoxContainer>

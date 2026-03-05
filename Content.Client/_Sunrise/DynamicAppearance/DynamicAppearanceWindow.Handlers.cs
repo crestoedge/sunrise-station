@@ -1,8 +1,6 @@
 using System.Linq;
 using Content.Client._Sunrise.TTS;
-using Content.Shared._Sunrise.TTS;
 using Content.Shared.Humanoid.Markings;
-using Content.Shared.Preferences;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Enums;
 
@@ -136,7 +134,27 @@ public sealed partial class DynamicAppearanceWindow
 
     private void InitColorHandlers()
     {
-        // Skin color
+        // Skin tone slider — used for species with unary (toned) coloration (e.g. humans).
+        _skinToneSlider = new Slider
+        {
+            MinValue = 0f,
+            MaxValue = 100f,
+            HorizontalExpand = true,
+            Visible = false,
+        };
+        SkinColorContainer.AddChild(_skinToneSlider);
+
+        _skinToneSlider.OnReleased += _ =>
+        {
+            if (_speciesProto == null)
+                return;
+
+            var strategy = _protoMan.Index(_speciesProto.SkinColoration).Strategy;
+            _draftState.SkinColor = strategy.FromUnary(_skinToneSlider.Value);
+            RefreshDummyPreview();
+        };
+
+        // Skin color RGB picker — used for species with free-color coloration.
         _skinColorSelector = new ColorSelectorSliders
         {
             SelectorType = ColorSelectorSliders.ColorSelectorType.Hsv,
@@ -180,7 +198,20 @@ public sealed partial class DynamicAppearanceWindow
             RefreshDummyPreview();
         };
 
-        HairPicker.OnSlotAdd += () => { };
+        HairPicker.OnSlotAdd += () =>
+        {
+            // Pick the first hair marking available for this species and add it.
+            var firstHair = _markingManager
+                .MarkingsByCategoryAndSpecies(MarkingCategories.Hair, _draftState.Species)
+                .Keys.FirstOrDefault();
+
+            if (string.IsNullOrEmpty(firstHair) || !_protoMan.TryIndex<MarkingPrototype>(firstHair, out var proto))
+                return;
+
+            _draftState.MarkingSet.AddBack(MarkingCategories.Hair, new Marking(firstHair, proto.Sprites.Count));
+            RefreshHairPickers();
+            RefreshDummyPreview();
+        };
 
         // Facial hair
         FacialHairPicker.OnMarkingSelect += args =>
@@ -201,7 +232,20 @@ public sealed partial class DynamicAppearanceWindow
             RefreshDummyPreview();
         };
 
-        FacialHairPicker.OnSlotAdd += () => { };
+        FacialHairPicker.OnSlotAdd += () =>
+        {
+            // Pick the first facial-hair marking available for this species and add it.
+            var firstFacial = _markingManager
+                .MarkingsByCategoryAndSpecies(MarkingCategories.FacialHair, _draftState.Species)
+                .Keys.FirstOrDefault();
+
+            if (string.IsNullOrEmpty(firstFacial) || !_protoMan.TryIndex<MarkingPrototype>(firstFacial, out var proto))
+                return;
+
+            _draftState.MarkingSet.AddBack(MarkingCategories.FacialHair, new Marking(firstFacial, proto.Sprites.Count));
+            RefreshHairPickers();
+            RefreshDummyPreview();
+        };
 
         // Body markings — MarkingPicker passes back its full set on every change
         Markings.OnMarkingAdded += set =>

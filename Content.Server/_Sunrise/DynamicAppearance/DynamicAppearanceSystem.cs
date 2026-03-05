@@ -20,13 +20,12 @@ public sealed class DynamicAppearanceSystem : EntitySystem
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly SharedHumanoidAppearanceSystem _humanoid = default!;
 
-    private const int AgeMin = 17;
-    private const int AgeMax = 120;
-
     public override void Initialize()
     {
         base.Initialize();
 
+        SubscribeLocalEvent<DynamicAppearanceComponent, ComponentStartup>(OnComponentStartup);
+        SubscribeLocalEvent<DynamicAppearanceComponent, ComponentRemove>(OnComponentRemove);
         SubscribeLocalEvent<DynamicAppearanceComponent, GetVerbsEvent<AlternativeVerb>>(OnVerbsRequest);
 
         Subs.BuiEvents<DynamicAppearanceComponent>(DynamicAppearanceUiKey.Key, subs =>
@@ -34,6 +33,24 @@ public sealed class DynamicAppearanceSystem : EntitySystem
             subs.Event<DynamicAppearanceSaveMessage>(OnSaveMessage);
         });
     }
+
+    #region Lifecycle
+
+    private void OnComponentStartup(EntityUid uid, DynamicAppearanceComponent component, ComponentStartup args)
+    {
+        if (TryComp<UserInterfaceComponent>(uid, out var ui))
+        {
+            _ui.SetUi(uid, DynamicAppearanceUiKey.Key, new InterfaceData("Content.Client._Sunrise.DynamicAppearance.DynamicAppearanceBoundUserInterface"));
+        }
+    }
+
+    private void OnComponentRemove(EntityUid uid, DynamicAppearanceComponent component, ComponentRemove args)
+    {
+        // Close the editor UI if open when the component is removed.
+        _ui.CloseUi(uid, DynamicAppearanceUiKey.Key);
+    }
+
+    #endregion
 
     #region Verb
 
@@ -83,8 +100,8 @@ public sealed class DynamicAppearanceSystem : EntitySystem
         // Eye color
         humanoid.EyeColor = args.State.EyeColor;
 
-        // Gender (pronouns)
-        humanoid.Gender = args.State.Gender;
+        // Gender (pronouns) — use SetGender so GrammarComponent and identity are also updated.
+        _humanoid.SetGender((ent.Owner, humanoid), args.State.Gender);
 
         // TTS voice
         if (!string.IsNullOrEmpty(args.State.Voice))

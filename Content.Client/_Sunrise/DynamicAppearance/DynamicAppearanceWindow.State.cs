@@ -1,6 +1,7 @@
 using System.Linq;
 using Content.Shared._Sunrise.DynamicAppearance;
 using Content.Shared._Sunrise.TTS;
+using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
 using Content.Shared.Humanoid.Prototypes;
 using Content.Shared.Preferences;
@@ -140,7 +141,30 @@ public sealed partial class DynamicAppearanceWindow
 
     private void RefreshSkinColor()
     {
-        _skinColorSelector.Color = _draftState.SkinColor;
+        if (_speciesProto == null)
+        {
+            _skinToneSlider.Visible = false;
+            _skinColorSelector.Visible = true;
+            _skinColorSelector.Color = _draftState.SkinColor;
+            return;
+        }
+
+        var strategy = _protoMan.Index(_speciesProto.SkinColoration).Strategy;
+
+        switch (strategy.InputType)
+        {
+            case SkinColorationStrategyInput.Unary:
+                _skinToneSlider.Visible = true;
+                _skinColorSelector.Visible = false;
+                _skinToneSlider.Value = strategy.ToUnary(_draftState.SkinColor);
+                break;
+
+            default:
+                _skinToneSlider.Visible = false;
+                _skinColorSelector.Visible = true;
+                _skinColorSelector.Color = _draftState.SkinColor;
+                break;
+        }
     }
 
     private void RefreshEyeColor()
@@ -164,8 +188,11 @@ public sealed partial class DynamicAppearanceWindow
 
     private void RefreshBodyMarkings()
     {
+        // Use the flat-list overload so MarkingPicker always reconstructs its internal set
+        // from speciesPrototype.MarkingPoints, giving proper per-category limits.
+        var markingsList = _draftState.MarkingSet.GetForwardEnumerator().ToList();
         Markings.SetData(
-            _draftState.MarkingSet,
+            markingsList,
             _draftState.Species,
             _draftState.Sex,
             _draftState.SkinColor,
