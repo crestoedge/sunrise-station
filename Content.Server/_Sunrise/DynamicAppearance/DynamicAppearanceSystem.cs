@@ -71,38 +71,38 @@ public sealed class DynamicAppearanceSystem : EntitySystem
             return;
 
         // Markings  filter to species-allowed only, then apply sex restrictions
-        var filtered = FilterMarkings(args.MarkingSet, humanoid.Species);
+        var filtered = FilterMarkings(args.State.MarkingSet, humanoid.Species);
         humanoid.MarkingSet = filtered;
 
         // Sex (also runs EnsureSexes on the marking set)
-        _humanoid.SetSex(ent, args.Sex, humanoid: humanoid);
+        _humanoid.SetSex(ent, args.State.Sex, humanoid: humanoid);
 
         // Skin color
-        _humanoid.SetSkinColor(ent, args.SkinColor, humanoid: humanoid);
+        _humanoid.SetSkinColor(ent, args.State.SkinColor, humanoid: humanoid);
 
         // Eye color
-        humanoid.EyeColor = args.EyeColor;
+        humanoid.EyeColor = args.State.EyeColor;
 
         // Age  clamped to sane range
-        humanoid.Age = Math.Clamp(args.Age, AgeMin, AgeMax);
+        humanoid.Age = Math.Clamp(args.State.Age, AgeMin, AgeMax);
 
         // Gender (pronouns)
-        humanoid.Gender = args.Gender;
+        humanoid.Gender = args.State.Gender;
 
         // TTS voice
-        if (!string.IsNullOrEmpty(args.Voice))
-            _humanoid.SetTTSVoice(ent, args.Voice, humanoid);
+        if (!string.IsNullOrEmpty(args.State.Voice))
+            _humanoid.SetTTSVoice(ent, args.State.Voice, humanoid);
 
         // Size  clamped to species bounds
         if (_prototypeManager.TryIndex<SpeciesPrototype>(humanoid.Species, out var speciesProto))
         {
-            humanoid.Width = Math.Clamp(args.Width, speciesProto.MinWidth, speciesProto.MaxWidth);
-            humanoid.Height = Math.Clamp(args.Height, speciesProto.MinHeight, speciesProto.MaxHeight);
+            humanoid.Width = Math.Clamp(args.State.Width, speciesProto.MinWidth, speciesProto.MaxWidth);
+            humanoid.Height = Math.Clamp(args.State.Height, speciesProto.MinHeight, speciesProto.MaxHeight);
         }
 
         // Custom base layers
         humanoid.CustomBaseLayers.Clear();
-        foreach (var (layer, info) in args.CustomBaseLayers)
+        foreach (var (layer, info) in args.State.CustomBaseLayers)
             humanoid.CustomBaseLayers[layer] = info;
 
         Dirty(ent, humanoid);
@@ -116,18 +116,21 @@ public sealed class DynamicAppearanceSystem : EntitySystem
     private void SendState(EntityUid uid, HumanoidAppearanceComponent humanoid)
     {
         _ui.SetUiState(uid, DynamicAppearanceUiKey.Key,
-            new DynamicAppearanceState(
-                humanoid.MarkingSet,
-                humanoid.Species,
-                humanoid.Sex,
-                humanoid.Age,
-                humanoid.Gender,
-                humanoid.Voice,
-                humanoid.SkinColor,
-                humanoid.EyeColor,
-                humanoid.CustomBaseLayers,
-                humanoid.Width,
-                humanoid.Height));
+            new DynamicAppearanceBUIState(
+                new DynamicAppearanceState(
+                    humanoid.MarkingSet,
+                    humanoid.Species,
+                    humanoid.Sex,
+                    humanoid.Age,
+                    humanoid.Gender,
+                    humanoid.Voice,
+                    humanoid.SkinColor,
+                    humanoid.EyeColor,
+                    humanoid.CustomBaseLayers,
+                    humanoid.Width,
+                    humanoid.Height
+                )
+            ));
     }
 
     /// <summary>

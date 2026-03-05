@@ -8,7 +8,7 @@ public sealed class DynamicAppearanceBoundUserInterface : BoundUserInterface
     [ViewVariables]
     private DynamicAppearanceWindow? _window;
 
-    private DynamicAppearanceState? _lastState;
+    private DynamicAppearanceBUIState? _lastState;
 
     public DynamicAppearanceBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
     {
@@ -23,7 +23,7 @@ public sealed class DynamicAppearanceBoundUserInterface : BoundUserInterface
         _window.OnSave += () =>
         {
             if (_window == null) return;
-            SendMessage(_window.BuildSaveMessage());
+            SendMessage(new DynamicAppearanceSaveMessage(_window.DraftState));
         };
 
         _window.OnReset += () =>
@@ -37,7 +37,7 @@ public sealed class DynamicAppearanceBoundUserInterface : BoundUserInterface
     {
         base.UpdateState(state);
 
-        if (state is not DynamicAppearanceState data || _window == null)
+        if (state is not DynamicAppearanceBUIState data || _window == null)
             return;
 
         _lastState = data;

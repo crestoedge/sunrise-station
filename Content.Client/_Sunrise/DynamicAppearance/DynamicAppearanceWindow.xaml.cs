@@ -31,16 +31,25 @@ public sealed partial class DynamicAppearanceWindow : DefaultWindow
     private readonly IConfigurationManager _cfg;
     private readonly ColorSelectorSliders _skinColorSelector;
 
-    // Draft state (mutated by controls; sent to server only on Save)
-    private Sex _draftSex;
-    private int _draftAge;
-    private Gender _draftGender;
-    private string _draftVoice = string.Empty;
-    private Color _draftSkinColor;
-    private Color _draftEyeColor;
-    private MarkingSet _draftMarkings = new();
-    private string _draftSpecies = string.Empty;
-    private Dictionary<HumanoidVisualLayers, CustomBaseLayerInfo> _draftBaseLayers = new();
+    private DynamicAppearanceState _draftState = new(
+        new MarkingSet(),
+        string.Empty,
+        Sex.Male,
+        0,
+        Gender.Male,
+        string.Empty,
+        Color.White,
+        Color.White,
+        new Dictionary<HumanoidVisualLayers, CustomBaseLayerInfo>(),
+        100f,
+        100f
+    );
+
+    public DynamicAppearanceState DraftState
+    {
+        get => _draftState;
+        private set => _draftState = value;
+    }
 
     // OptionButton value lists
     private readonly List<Sex> _sexValues = new();
@@ -49,9 +58,6 @@ public sealed partial class DynamicAppearanceWindow : DefaultWindow
     private readonly bool _ttsEnabled;
 
     private SpeciesPrototype? _speciesProto;
-
-    /// <summary>Set during UpdateState to prevent re-entrant change events.</summary>
-    private bool _loading;
 
     public DynamicAppearanceWindow()
     {
@@ -62,7 +68,67 @@ public sealed partial class DynamicAppearanceWindow : DefaultWindow
         _cfg = IoCManager.Resolve<IConfigurationManager>();
 
         _ttsEnabled = _cfg.GetCVar(SunriseCCVars.TTSEnabled);
-        TTSContainer.Visible = _ttsEnabled;
+        TTSContainer.Visible = true; // TODO: change back to _ttsEnabled after testing on local server
+
+        // Age
+        AgeEdit.OnTextChanged += args => _draftState.Age = int.TryParse(args.Text, out var age) ? age : _draftState.Age;
+
+        // Sex
+        SexButton.OnItemSelected += args =>
+        {
+            if (args.Id < _sexValues.Count)
+                _draftState.Sex = _sexValues[args.Id];
+            if (_ttsEnabled)
+                UpdateVoiceList();
+            RefreshBodyMarkings();
+        };
+
+        // Pronouns static list built once
+        foreach (Gender gender in Enum.GetValues<Gender>())
+        {
+            PronounsButton.AddItem(
+                Loc.GetString($"humanoid-profile-editor-pronouns-{gender.ToString().ToLowerInvariant()}-text"),
+                _genderValues.Count
+            );
+            _genderValues.Add(gender);
+        }
+        PronounsButton.OnItemSelected += args =>
+        {
+            if (args.Id < _genderValues.Count)
+                _draftState.Gender = _genderValues[args.Id];
+        };
+
+        // TTS voice
+        VoiceButton.OnItemSelected += args =>
+        {
+            if (args.Id < _filteredVoices.Count)
+                _draftState.Voice = _filteredVoices[args.Id].ID;
+        };
+        VoicePlayButton.OnPressed += _ => { /* TODO: TTS preview stub */ };
+
+        // Height slider
+        HeightSlider.OnValueChanged += _ =>
+        {
+            UpdateSizeLabels();
+        };
+        HeightResetButton.OnPressed += _ =>
+        {
+            if (_speciesProto == null) return;
+            HeightSlider.Value = _speciesProto.DefaultHeight;
+            UpdateSizeLabels();
+        };
+
+        // Width slider
+        WidthSlider.OnValueChanged += _ =>
+        {
+            UpdateSizeLabels();
+        };
+        WidthResetButton.OnPressed += _ =>
+        {
+            if (_speciesProto == null) return;
+            WidthSlider.Value = _speciesProto.DefaultWidth;
+            UpdateSizeLabels();
+        };
 
         // Skin color selector
         _skinColorSelector = new ColorSelectorSliders
@@ -70,107 +136,27 @@ public sealed partial class DynamicAppearanceWindow : DefaultWindow
             SelectorType = ColorSelectorSliders.ColorSelectorType.Hsv
         };
         SkinColorContainer.AddChild(_skinColorSelector);
-        _skinColorSelector.OnColorChanged += color =>
-        {
-            if (_loading) return;
-            _draftSkinColor = color;
-        };
+        _skinColorSelector.OnColorChanged += color => _draftState.SkinColor = color;
 
         // Eye color
-        EyeColorPicker.OnEyeColorPicked += color =>
-        {
-            if (_loading) return;
-            _draftEyeColor = color;
-        };
+        EyeColorPicker.OnEyeColorPicked += color => _draftState.EyeColor = color;
 
-        // Age
-        AgeEdit.OnTextChanged += args =>
-        {
-            if (_loading) return;
-            if (int.TryParse(args.Text, out var age))
-                _draftAge = age;
-        };
-
-        // Sex
-        SexButton.OnItemSelected += args =>
-        {
-            if (_loading) return;
-            if (args.Id < _sexValues.Count)
-                _draftSex = _sexValues[args.Id];
-            if (_ttsEnabled) UpdateVoiceList();
-            RefreshBodyMarkings();
-        };
-
-        // Pronouns  static list built once
-        foreach (Gender g in Enum.GetValues<Gender>())
-        {
-            PronounsButton.AddItem(
-                Loc.GetString($"humanoid-profile-editor-pronouns-{g.ToString().ToLowerInvariant()}-text"),
-                _genderValues.Count);
-            _genderValues.Add(g);
-        }
-        PronounsButton.OnItemSelected += args =>
-        {
-            if (_loading) return;
-            if (args.Id < _genderValues.Count)
-                _draftGender = _genderValues[args.Id];
-        };
-
-        // TTS voice
-        VoiceButton.OnItemSelected += args =>
-        {
-            if (_loading) return;
-            if (args.Id < _filteredVoices.Count)
-                _draftVoice = _filteredVoices[args.Id].ID;
-        };
-        VoicePlayButton.OnPressed += _ => { /* TTS preview stub */ };
-
-        // Height slider
-        HeightSlider.OnValueChanged += _ =>
-        {
-            if (_loading) return;
-            UpdateSizeLabels();
-        };
-        HeightResetButton.OnPressed += _ =>
-        {
-            if (_speciesProto == null) return;
-            _loading = true;
-            HeightSlider.Value = _speciesProto.DefaultHeight;
-            _loading = false;
-            UpdateSizeLabels();
-        };
-
-        // Width slider
-        WidthSlider.OnValueChanged += _ =>
-        {
-            if (_loading) return;
-            UpdateSizeLabels();
-        };
-        WidthResetButton.OnPressed += _ =>
-        {
-            if (_speciesProto == null) return;
-            _loading = true;
-            WidthSlider.Value = _speciesProto.DefaultWidth;
-            _loading = false;
-            UpdateSizeLabels();
-        };
-
-        // Hair pickers  sync changes directly into _draftMarkings
+        // Hair pickers  sync changes directly into _draftState
         HairPicker.OnMarkingSelect += args => ApplyMarkingSelect(MarkingCategories.Hair, args.slot, args.id);
         HairPicker.OnColorChanged += args => ApplyMarkingColor(MarkingCategories.Hair, args.slot, args.marking);
-        HairPicker.OnSlotRemove += slot => _draftMarkings.Remove(MarkingCategories.Hair, slot);
+        HairPicker.OnSlotRemove += slot => _draftState.MarkingSet.Remove(MarkingCategories.Hair, slot);
         HairPicker.OnSlotAdd += () => { };
 
         FacialHairPicker.OnMarkingSelect += args => ApplyMarkingSelect(MarkingCategories.FacialHair, args.slot, args.id);
         FacialHairPicker.OnColorChanged += args => ApplyMarkingColor(MarkingCategories.FacialHair, args.slot, args.marking);
-        FacialHairPicker.OnSlotRemove += slot => _draftMarkings.Remove(MarkingCategories.FacialHair, slot);
+        FacialHairPicker.OnSlotRemove += slot => _draftState.MarkingSet.Remove(MarkingCategories.FacialHair, slot);
         FacialHairPicker.OnSlotAdd += () => { };
 
         // Body markings  MarkingPicker passes back its internal set on every change
-        Markings.OnMarkingAdded += set => _draftMarkings = set;
-        Markings.OnMarkingRemoved += set => _draftMarkings = set;
-        Markings.OnMarkingColorChange += set => _draftMarkings = set;
-        Markings.OnMarkingRankChange += set => _draftMarkings = set;
+        Markings.OnMarkingAdded += set => _draftState.MarkingSet = set;
+        Markings.OnMarkingRemoved += set => _draftState.MarkingSet = set;
+        Markings.OnMarkingColorChange += set => _draftState.MarkingSet = set;
+        Markings.OnMarkingRankChange += set => _draftState.MarkingSet = set;
 
         // Save / Reset buttons
         SaveButton.OnPressed += _ => OnSave?.Invoke();
@@ -180,78 +166,46 @@ public sealed partial class DynamicAppearanceWindow : DefaultWindow
     /// <summary>
     /// Pushes a full server state into every control and resets the draft.
     /// </summary>
-    public void UpdateState(DynamicAppearanceState state)
+    public void UpdateState(DynamicAppearanceBUIState state)
     {
-        _loading = true;
-        try
+        _draftState = state.State;
+
+        _speciesProto = _protoMan.TryIndex<SpeciesPrototype>(_draftState.Species, out var sp) ? sp : null;
+
+        // Age
+        AgeEdit.Text = _draftState.Age.ToString();
+
+        // Sex
+        RebuildSexButton();
+
+        // Pronouns
+        var genderIdx = _genderValues.IndexOf(_draftState.Gender);
+        if (genderIdx >= 0) PronounsButton.SelectId(genderIdx);
+
+        // TTS
+        if (_ttsEnabled) UpdateVoiceList();
+
+        // Size sliders
+        if (_speciesProto != null)
         {
-            _draftSpecies = state.Species;
-            _draftSex = state.Sex;
-            _draftAge = state.Age;
-            _draftGender = state.Gender;
-            _draftVoice = state.Voice;
-            _draftSkinColor = state.SkinColor;
-            _draftEyeColor = state.EyeColor;
-            _draftMarkings = new MarkingSet(state.MarkingSet);
-            _draftBaseLayers = state.CustomBaseLayers;
-
-            _speciesProto = _protoMan.TryIndex<SpeciesPrototype>(state.Species, out var sp) ? sp : null;
-
-            // Age
-            AgeEdit.Text = state.Age.ToString();
-
-            // Sex
-            RebuildSexButton();
-
-            // Pronouns
-            var genderIdx = _genderValues.IndexOf(state.Gender);
-            if (genderIdx >= 0) PronounsButton.SelectId(genderIdx);
-
-            // TTS
-            if (_ttsEnabled) UpdateVoiceList();
-
-            // Size sliders
-            if (_speciesProto != null)
-            {
-                HeightSlider.MinValue = _speciesProto.MinHeight;
-                HeightSlider.MaxValue = _speciesProto.MaxHeight;
-                WidthSlider.MinValue = _speciesProto.MinWidth;
-                WidthSlider.MaxValue = _speciesProto.MaxWidth;
-            }
-            HeightSlider.Value = state.Height;
-            WidthSlider.Value = state.Width;
-            UpdateSizeLabels();
-
-            // Colors
-            _skinColorSelector.Color = state.SkinColor;
-            EyeColorPicker.SetData(state.EyeColor);
-
-            // Hair
-            RefreshHairPickers();
-
-            // Body markings
-            Markings.SetData(_draftMarkings, state.Species, state.Sex, state.SkinColor, state.EyeColor);
+            HeightSlider.MinValue = _speciesProto.MinHeight;
+            HeightSlider.MaxValue = _speciesProto.MaxHeight;
+            WidthSlider.MinValue = _speciesProto.MinWidth;
+            WidthSlider.MaxValue = _speciesProto.MaxWidth;
         }
-        finally
-        {
-            _loading = false;
-        }
-    }
+        HeightSlider.Value = _draftState.Height;
+        WidthSlider.Value = _draftState.Width;
+        UpdateSizeLabels();
 
-    /// <summary>Builds the save message from current draft state.</summary>
-    public DynamicAppearanceSaveMessage BuildSaveMessage()
-    {
-        return new DynamicAppearanceSaveMessage(
-            _draftMarkings,
-            _draftSex,
-            _draftAge,
-            _draftGender,
-            _draftVoice,
-            _draftSkinColor,
-            _draftEyeColor,
-            _draftBaseLayers,
-            WidthSlider.Value,
-            HeightSlider.Value);
+        // Colors
+        _skinColorSelector.Color = _draftState.SkinColor;
+        EyeColorPicker.SetData(_draftState.EyeColor);
+
+        // Hair
+        RefreshHairPickers();
+
+        // Body markings
+        Markings.SetData(_draftState.MarkingSet, _draftState.Species, _draftState.Sex, _draftState.SkinColor, _draftState.EyeColor);
     }
 
     // =========================================================================
@@ -272,20 +226,20 @@ public sealed partial class DynamicAppearanceWindow : DefaultWindow
             _sexValues.Add(sex);
         }
 
-        var idx = _sexValues.IndexOf(_draftSex);
+        var idx = _sexValues.IndexOf(_draftState.Sex);
         if (idx >= 0)
             SexButton.SelectId(idx);
         else if (_sexValues.Count > 0)
         {
             SexButton.SelectId(0);
-            _draftSex = _sexValues[0];
+            _draftState.Sex = _sexValues[0];
         }
     }
 
     private void UpdateVoiceList()
     {
         _filteredVoices = _protoMan.EnumeratePrototypes<TTSVoicePrototype>()
-            .Where(v => v.RoundStart && HumanoidCharacterProfile.CanHaveVoice(v, _draftSex))
+            .Where(v => v.RoundStart && HumanoidCharacterProfile.CanHaveVoice(v, _draftState.Sex))
             .OrderBy(v => v.Name)
             .ToList();
 
@@ -295,14 +249,14 @@ public sealed partial class DynamicAppearanceWindow : DefaultWindow
         {
             var voice = _filteredVoices[i];
             VoiceButton.AddItem(voice.Name, i);
-            if (voice.ID == _draftVoice)
+            if (voice.ID == _draftState.Voice)
                 selectIdx = i;
         }
 
         if (_filteredVoices.Count > 0)
         {
             VoiceButton.SelectId(selectIdx);
-            _draftVoice = _filteredVoices[selectIdx].ID;
+            _draftState.Voice = _filteredVoices[selectIdx].ID;
         }
     }
 
@@ -314,33 +268,33 @@ public sealed partial class DynamicAppearanceWindow : DefaultWindow
 
     private void RefreshHairPickers()
     {
-        var hairList = _draftMarkings.TryGetCategory(MarkingCategories.Hair, out var h)
+        var hairList = _draftState.MarkingSet.TryGetCategory(MarkingCategories.Hair, out var h)
             ? h.ToList() : new List<Marking>();
-        var facialList = _draftMarkings.TryGetCategory(MarkingCategories.FacialHair, out var fh)
+        var facialList = _draftState.MarkingSet.TryGetCategory(MarkingCategories.FacialHair, out var fh)
             ? fh.ToList() : new List<Marking>();
 
-        HairPicker.UpdateData(hairList, _draftSpecies, 1);
-        FacialHairPicker.UpdateData(facialList, _draftSpecies, 1);
+        HairPicker.UpdateData(hairList, _draftState.Species, 1);
+        FacialHairPicker.UpdateData(facialList, _draftState.Species, 1);
     }
 
     private void RefreshBodyMarkings()
     {
-        Markings.SetData(_draftMarkings, _draftSpecies, _draftSex, _draftSkinColor, _draftEyeColor);
+        Markings.SetData(_draftState.MarkingSet, _draftState.Species, _draftState.Sex, _draftState.SkinColor, _draftState.EyeColor);
     }
 
     private void ApplyMarkingSelect(MarkingCategories category, int slot, string newId)
     {
         if (!_protoMan.TryIndex<MarkingPrototype>(newId, out var proto)) return;
 
-        if (_draftMarkings.TryGetCategory(category, out var list) && slot < list.Count)
-            _draftMarkings.Replace(category, slot, new Marking(newId, proto.Sprites.Count));
+        if (_draftState.MarkingSet.TryGetCategory(category, out var list) && slot < list.Count)
+            _draftState.MarkingSet.Replace(category, slot, new Marking(newId, proto.Sprites.Count));
         else
-            _draftMarkings.AddBack(category, new Marking(newId, proto.Sprites.Count));
+            _draftState.MarkingSet.AddBack(category, new Marking(newId, proto.Sprites.Count));
     }
 
     private void ApplyMarkingColor(MarkingCategories category, int slot, Marking updated)
     {
-        if (_draftMarkings.TryGetCategory(category, out var list) && slot < list.Count)
-            _draftMarkings.Replace(category, slot, updated);
+        if (_draftState.MarkingSet.TryGetCategory(category, out var list) && slot < list.Count)
+            _draftState.MarkingSet.Replace(category, slot, updated);
     }
 }
