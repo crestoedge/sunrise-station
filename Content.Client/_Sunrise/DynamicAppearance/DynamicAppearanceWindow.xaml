@@ -1,79 +1,106 @@
 ﻿<DefaultWindow xmlns="https://spacestation14.io"
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                xmlns:humanoid="clr-namespace:Content.Client.Humanoid"
+               xmlns:cc="clr-namespace:Content.Client.Administration.UI.CustomControls"
                Title="{Loc 'dynamic-appearance-window-title'}"
-               MinSize="620 540">
-    <BoxContainer Orientation="Vertical" VerticalExpand="True">
-        <!-- Save / Reset bar -->
-        <BoxContainer Orientation="Horizontal" SeparationOverride="4" Margin="4">
-            <Button Name="SaveButton" Text="{Loc 'dynamic-appearance-save'}" HorizontalExpand="True" />
-            <Button Name="ResetButton" Text="{Loc 'dynamic-appearance-reset'}" />
-        </BoxContainer>
-        <ScrollContainer VerticalExpand="True">
-            <!-- make it stretch vertically to fit content -->
-            <BoxContainer Orientation="Vertical">
-                <!-- Age -->
-                <BoxContainer HorizontalExpand="True" Margin="4 2">
-                    <Label Text="{Loc 'humanoid-profile-editor-age-label'}" />
-                    <Control HorizontalExpand="True"/>
-                    <LineEdit Name="AgeEdit" MinSize="50 0" HorizontalAlignment="Right" />
-                </BoxContainer>
-                <!-- Sex -->
-                <BoxContainer HorizontalExpand="True" Margin="4 2">
-                    <Label Text="{Loc 'humanoid-profile-editor-sex-label'}" />
-                    <Control HorizontalExpand="True"/>
-                    <OptionButton Name="SexButton" HorizontalAlignment="Right" />
-                </BoxContainer>
-                <!-- Pronouns -->
-                <BoxContainer HorizontalExpand="True" Margin="4 2">
-                    <Label Text="{Loc 'humanoid-profile-editor-pronouns-label'}" />
-                    <Control HorizontalExpand="True"/>
-                    <OptionButton Name="PronounsButton" HorizontalAlignment="Right" />
-                </BoxContainer>
-                <!-- TTS voice (hidden if TTS disabled) -->
-                <BoxContainer Name="TTSContainer" Visible="False" Orientation="Vertical" Margin="4 2">
-                    <BoxContainer HorizontalExpand="True">
-                        <Label Text="{Loc 'humanoid-profile-editor-voice-label'}" />
-                        <Control HorizontalExpand="True"/>
-                        <Button Name="VoicePlayButton" Text="{Loc 'humanoid-profile-editor-voice-play'}" />
-                        <OptionButton Name="VoiceButton" HorizontalAlignment="Right" MinSize="160 0" />
-                    </BoxContainer>
-                </BoxContainer>
-                <!-- Height -->
-                <BoxContainer HorizontalExpand="True" Margin="4 2">
-                    <Label Name="HeightLabel" Text="{Loc 'dynamic-appearance-height-label'}" />
-                    <Control HorizontalExpand="True"/>
-                    <Slider Name="HeightSlider" MinSize="160 0" HorizontalAlignment="Right" />
-                    <Button Name="HeightResetButton" Text="{Loc 'humanoid-profile-editor-slider-reset'}" />
-                </BoxContainer>
-                <!-- Width -->
-                <BoxContainer HorizontalExpand="True" Margin="4 2">
-                    <Label Name="WidthLabel" Text="{Loc 'dynamic-appearance-width-label'}" />
-                    <Control HorizontalExpand="True"/>
-                    <Slider Name="WidthSlider" MinSize="160 0" HorizontalAlignment="Right" />
-                    <Button Name="WidthResetButton" Text="{Loc 'humanoid-profile-editor-slider-reset'}" />
-                </BoxContainer>
-                <!-- Skin color -->
-                <BoxContainer Orientation="Vertical" Margin="8 4">
-                    <Label Text="{Loc 'dynamic-appearance-skin-color-label'}" StyleClasses="LabelHeading" />
-                    <BoxContainer Name="SkinColorContainer" Orientation="Vertical" HorizontalExpand="True" />
-                </BoxContainer>
-                <!-- Eye color -->
-                <BoxContainer Orientation="Vertical" Margin="8 4">
-                    <Label Text="{Loc 'dynamic-appearance-eye-color-label'}" StyleClasses="LabelHeading" />
-                    <humanoid:EyeColorPicker Name="EyeColorPicker" />
-                </BoxContainer>
-                <!-- Hair -->
-                <BoxContainer Orientation="Horizontal" Margin="8 4" SeparationOverride="4">
-                    <humanoid:SingleMarkingPicker Name="HairPicker" Category="Hair" />
-                    <humanoid:SingleMarkingPicker Name="FacialHairPicker" Category="FacialHair" />
-                </BoxContainer>
-                <!-- Body markings -->
-                <BoxContainer Orientation="Vertical" Margin="8 4" VerticalExpand="True">
-                    <Label Text="{Loc 'dynamic-appearance-markings-label'}" StyleClasses="LabelHeading" />
-                    <humanoid:MarkingPicker Name="Markings" IgnoreCategories="Hair,FacialHair" />
-                </BoxContainer>
+               MinSize="750 600">
+    <BoxContainer Orientation="Horizontal" HorizontalExpand="True" VerticalExpand="True">
+        <!-- ═══════════ Left: editor controls ═══════════ -->
+        <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" MinSize="440 0">
+            <!-- Save / Reset bar -->
+            <BoxContainer Orientation="Horizontal" SeparationOverride="4" Margin="4">
+                <Button Name="SaveButton" Text="{Loc 'dynamic-appearance-save'}" HorizontalExpand="True" />
+                <Button Name="ResetButton" Text="{Loc 'dynamic-appearance-reset'}" />
             </BoxContainer>
-        </ScrollContainer>
+
+            <ScrollContainer VerticalExpand="True" HorizontalExpand="True">
+                <BoxContainer Orientation="Vertical" HorizontalExpand="True">
+
+                    <!-- ── Age ── -->
+                    <BoxContainer HorizontalExpand="True" Margin="4 2">
+                        <Label Text="{Loc 'dynamic-appearance-age-label'}" />
+                        <Control HorizontalExpand="True" />
+                        <LineEdit Name="AgeEdit" MinSize="50 0" HorizontalAlignment="Right" />
+                    </BoxContainer>
+
+                    <!-- ── Sex ── -->
+                    <BoxContainer HorizontalExpand="True" Margin="4 2">
+                        <Label Text="{Loc 'dynamic-appearance-sex-label'}" />
+                        <Control HorizontalExpand="True" />
+                        <OptionButton Name="SexButton" HorizontalAlignment="Right" />
+                    </BoxContainer>
+
+                    <!-- ── Pronouns ── -->
+                    <BoxContainer HorizontalExpand="True" Margin="4 2">
+                        <Label Text="{Loc 'dynamic-appearance-pronouns-label'}" />
+                        <Control HorizontalExpand="True" />
+                        <OptionButton Name="PronounsButton" HorizontalAlignment="Right" />
+                    </BoxContainer>
+
+                    <!-- ── TTS voice (hidden if TTS disabled) ── -->
+                    <BoxContainer Name="TTSContainer" Visible="False" Orientation="Vertical" Margin="4 2">
+                        <BoxContainer HorizontalExpand="True">
+                            <Label Text="{Loc 'dynamic-appearance-voice-label'}" />
+                            <Control HorizontalExpand="True" />
+                            <Button Name="VoicePlayButton" Text="{Loc 'humanoid-profile-editor-voice-play'}" />
+                            <OptionButton Name="VoiceButton" HorizontalAlignment="Right" MinSize="160 0" />
+                        </BoxContainer>
+                    </BoxContainer>
+
+                    <!-- ── Height ── -->
+                    <BoxContainer HorizontalExpand="True" Margin="4 2">
+                        <Label Name="HeightLabel" MinSize="120 0" />
+                        <Control HorizontalExpand="True" />
+                        <Slider Name="HeightSlider" MinSize="180 0" HorizontalAlignment="Right" />
+                        <Button Name="HeightResetButton" Text="{Loc 'humanoid-profile-editor-slider-reset'}" />
+                    </BoxContainer>
+
+                    <!-- ── Width ── -->
+                    <BoxContainer HorizontalExpand="True" Margin="4 2">
+                        <Label Name="WidthLabel" MinSize="120 0" />
+                        <Control HorizontalExpand="True" />
+                        <Slider Name="WidthSlider" MinSize="180 0" HorizontalAlignment="Right" />
+                        <Button Name="WidthResetButton" Text="{Loc 'humanoid-profile-editor-slider-reset'}" />
+                    </BoxContainer>
+
+                    <!-- ── Skin color ── -->
+                    <BoxContainer Orientation="Vertical" Margin="8 4" HorizontalExpand="True">
+                        <Label Text="{Loc 'dynamic-appearance-skin-color-label'}" StyleClasses="LabelHeading" />
+                        <BoxContainer Name="SkinColorContainer" Orientation="Vertical" HorizontalExpand="True" />
+                    </BoxContainer>
+
+                    <!-- ── Eye color ── -->
+                    <BoxContainer Orientation="Vertical" Margin="8 4" HorizontalExpand="True">
+                        <Label Text="{Loc 'dynamic-appearance-eye-color-label'}" StyleClasses="LabelHeading" />
+                        <humanoid:EyeColorPicker Name="EyeColorPicker" />
+                    </BoxContainer>
+
+                    <!-- ── Hair ── -->
+                    <BoxContainer Orientation="Horizontal" Margin="8 4" SeparationOverride="4">
+                        <humanoid:SingleMarkingPicker Name="HairPicker" Category="Hair" />
+                        <humanoid:SingleMarkingPicker Name="FacialHairPicker" Category="FacialHair" />
+                    </BoxContainer>
+
+                    <!-- ── Body markings ── -->
+                    <BoxContainer Orientation="Vertical" Margin="8 4" VerticalExpand="True" HorizontalExpand="True">
+                        <Label Text="{Loc 'dynamic-appearance-markings-label'}" StyleClasses="LabelHeading" />
+                        <humanoid:MarkingPicker Name="Markings" IgnoreCategories="Hair,FacialHair" />
+                    </BoxContainer>
+
+                </BoxContainer>
+            </ScrollContainer>
+        </BoxContainer>
+
+        <!-- ═══════════ Right: character preview ═══════════ -->
+        <BoxContainer Orientation="Vertical" VerticalExpand="True" VerticalAlignment="Center" MinSize="280 0" Margin="4 0 4 0">
+            <SpriteView Name="SpriteView" Scale="8 8" Margin="4" SizeFlagsStretchRatio="1" SetSize="256 384" />
+            <BoxContainer Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 5">
+                <Button Name="RotateLeftButton" Text="◀" StyleClasses="OpenRight" />
+                <cc:VSeparator Margin="2 0 3 0" />
+                <Button Name="RotateRightButton" Text="▶" StyleClasses="OpenLeft" />
+            </BoxContainer>
+            <Button Name="ShowClothesButton" ToggleMode="True" Pressed="True"
+                    Text="{Loc 'dynamic-appearance-show-clothes'}" HorizontalAlignment="Center" />
+        </BoxContainer>
     </BoxContainer>
 </DefaultWindow>

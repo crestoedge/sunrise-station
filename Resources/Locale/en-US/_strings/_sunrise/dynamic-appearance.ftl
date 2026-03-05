@@ -1,2 +1,16 @@
 dynamic-appearance-verb-text = Modify Appearance
 dynamic-appearance-window-title = Dynamic Appearance Editor
+dynamic-appearance-verb = Modify Appearance
+dynamic-appearance-save = Save
+dynamic-appearance-reset = Reset
+dynamic-appearance-skin-color-label = Skin Color
+dynamic-appearance-eye-color-label = Eye Color
+dynamic-appearance-markings-label = Markings
+dynamic-appearance-height-label = Height: { $value }%
+dynamic-appearance-width-label = Width: { $value }%
+dynamic-appearance-show-clothes = Show Clothes
+dynamic-appearance-age-label = Age
+dynamic-appearance-sex-label = Sex
+dynamic-appearance-pronouns-label = Pronouns
+dynamic-appearance-voice-label = Voice
+dynamic-appearance-hair-label = Hair

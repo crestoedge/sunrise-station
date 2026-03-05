@@ -22,7 +22,9 @@ public sealed class DynamicAppearanceBoundUserInterface : BoundUserInterface
 
         _window.OnSave += () =>
         {
-            if (_window == null) return;
+            if (_window == null)
+                return;
+
             SendMessage(new DynamicAppearanceSaveMessage(_window.DraftState));
         };
 
@@ -31,16 +33,20 @@ public sealed class DynamicAppearanceBoundUserInterface : BoundUserInterface
             if (_lastState != null)
                 _window?.UpdateState(_lastState);
         };
+
+        // If the server already pushed a state before Open(), apply it now.
+        if (_lastState != null)
+            _window.UpdateState(_lastState);
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)
     {
         base.UpdateState(state);
 
-        if (state is not DynamicAppearanceBUIState data || _window == null)
+        if (state is not DynamicAppearanceBUIState data)
             return;
 
         _lastState = data;
-        _window.UpdateState(data);
+        _window?.UpdateState(data);
     }
 }

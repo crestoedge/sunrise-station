@@ -129,7 +129,8 @@ public sealed class DynamicAppearanceSystem : EntitySystem
                     humanoid.CustomBaseLayers,
                     humanoid.Width,
                     humanoid.Height
-                )
+                ),
+                GetNetEntity(uid)
             ));
     }
 
