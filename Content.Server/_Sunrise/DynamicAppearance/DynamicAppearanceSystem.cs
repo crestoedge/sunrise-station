@@ -70,7 +70,7 @@ public sealed class DynamicAppearanceSystem : EntitySystem
         if (!TryComp<HumanoidAppearanceComponent>(ent, out var humanoid))
             return;
 
-        // Markings  filter to species-allowed only, then apply sex restrictions
+        // Markings filter to species-allowed only, then apply sex restrictions
         var filtered = FilterMarkings(args.State.MarkingSet, humanoid.Species);
         humanoid.MarkingSet = filtered;
 
@@ -83,9 +83,6 @@ public sealed class DynamicAppearanceSystem : EntitySystem
         // Eye color
         humanoid.EyeColor = args.State.EyeColor;
 
-        // Age  clamped to sane range
-        humanoid.Age = Math.Clamp(args.State.Age, AgeMin, AgeMax);
-
         // Gender (pronouns)
         humanoid.Gender = args.State.Gender;
 
@@ -93,11 +90,14 @@ public sealed class DynamicAppearanceSystem : EntitySystem
         if (!string.IsNullOrEmpty(args.State.Voice))
             _humanoid.SetTTSVoice(ent, args.State.Voice, humanoid);
 
-        // Size  clamped to species bounds
         if (_prototypeManager.TryIndex<SpeciesPrototype>(humanoid.Species, out var speciesProto))
         {
+            // Size clamped to species bounds
             humanoid.Width = Math.Clamp(args.State.Width, speciesProto.MinWidth, speciesProto.MaxWidth);
             humanoid.Height = Math.Clamp(args.State.Height, speciesProto.MinHeight, speciesProto.MaxHeight);
+
+            // Age clamped to species age bounds
+            humanoid.Age = Math.Clamp(args.State.Age, speciesProto.MinAge, speciesProto.MaxAge);
         }
 
         // Custom base layers
